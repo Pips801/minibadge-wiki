@@ -27,7 +27,7 @@
       <!-- Filter / search controls -->
       <div class="box">
         <div class="columns is-multiline">
-          <!-- Search -->
+          <!-- Search + clear + count -->
           <div class="column is-12-tablet is-6-desktop">
             <div class="field">
               <label class="label">Search</label>
@@ -38,6 +38,24 @@
                   placeholder="Search by title, author, description, etc."
                   id="searchInput"
                 />
+              </div>
+            </div>
+
+            <!-- Clear filters button + results count -->
+            <div class="field is-grouped is-align-items-center mt-2">
+              <div class="control">
+                <button
+                  class="button is-light is-small"
+                  id="clearFiltersButton"
+                  type="button"
+                >
+                  Clear filters
+                </button>
+              </div>
+              <div class="control">
+                <p id="resultsCount" class="help">
+                  <!-- Filled by JS: "Showing X of Y minibadges" -->
+                </p>
               </div>
             </div>
           </div>
@@ -145,13 +163,16 @@
 
   <script>
     document.addEventListener('DOMContentLoaded', () => {
-      const listContainer   = document.querySelector('#items-list .minibadge-list');
-      const categoryFilter  = document.getElementById('categoryFilter');
-      const yearFilter      = document.getElementById('yearFilter');
-      const difficultyFilter= document.getElementById('difficultyFilter');
-      const authorFilter    = document.getElementById('authorFilter');
-      const sortSelect      = document.getElementById('sortSelect');
-      const emptyMessage    = document.getElementById('emptyMessage');
+      const listContainer      = document.querySelector('#items-list .minibadge-list');
+      const categoryFilter     = document.getElementById('categoryFilter');
+      const yearFilter         = document.getElementById('yearFilter');
+      const difficultyFilter   = document.getElementById('difficultyFilter');
+      const authorFilter       = document.getElementById('authorFilter');
+      const sortSelect         = document.getElementById('sortSelect');
+      const emptyMessage       = document.getElementById('emptyMessage');
+      const clearFiltersButton = document.getElementById('clearFiltersButton');
+      const searchInput        = document.getElementById('searchInput');
+      const resultsCount       = document.getElementById('resultsCount');
 
       // Helper to safely escape text into HTML
       function esc(str) {
@@ -296,7 +317,7 @@
       }
 
       // Fetch minibadges.json and build the list
-      fetch('./minibadges.json')
+      fetch('minibadges.json')
         .then(response => {
           if (!response.ok) {
             throw new Error('Failed to load minibadges.json');
@@ -325,7 +346,8 @@
             ]
           };
 
-          const itemList = new List('items-list', options);
+          const itemList   = new List('items-list', options);
+          const totalCount = itemList.items.length;
 
           // --- Faceted filter support ---
 
@@ -406,6 +428,17 @@
             });
           }
 
+          // Results count updater
+          function updateResultsCount(list) {
+            if (!resultsCount) return;
+            const current = list.matchingItems.length;
+            if (current === totalCount) {
+              resultsCount.textContent = `Showing ${current} minibadges`;
+            } else {
+              resultsCount.textContent = `Showing ${current} of ${totalCount} minibadges`;
+            }
+          }
+
           categoryFilter.addEventListener('change', applyFilters);
           yearFilter.addEventListener('change', applyFilters);
           difficultyFilter.addEventListener('change', applyFilters);
@@ -431,9 +464,26 @@
             }
           });
 
-          // Hook into List.js updates to refresh facets + empty-state
+          // Clear filters button logic
+          if (clearFiltersButton) {
+            clearFiltersButton.addEventListener('click', () => {
+              // Reset input + selects
+              if (searchInput) searchInput.value = '';
+              categoryFilter.value   = '';
+              yearFilter.value       = '';
+              difficultyFilter.value = '';
+              authorFilter.value     = '';
+
+              // Clear List.js search + filters
+              itemList.search('');
+              itemList.filter();
+            });
+          }
+
+          // When List.js updates (search, filters, sort), refresh facets + empty message + count
           itemList.on('updated', function (list) {
             refreshFacets(list);
+            updateResultsCount(list);
 
             if (list.matchingItems.length === 0) {
               emptyMessage.style.display = '';
@@ -442,14 +492,18 @@
             }
           });
 
-          // Initial facet population and default sort
+          // Initial facet population, sort, and count
           refreshFacets(itemList);
           itemList.sort('item-timestamp', { order: 'desc' });
+          updateResultsCount(itemList);
         })
         .catch(err => {
           console.error(err);
           emptyMessage.style.display = '';
           emptyMessage.textContent = 'Failed to load minibadge data.';
+          if (resultsCount) {
+            resultsCount.textContent = 'Showing 0 minibadges';
+          }
         });
     });
   </script>
