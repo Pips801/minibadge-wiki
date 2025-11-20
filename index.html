@@ -117,6 +117,7 @@
                 </div>
               </div>
             </div>
+          </div>
 
           <!-- Clear filters + results count (own column, inline with others) -->
           <div class="column is-6-tablet is-3-desktop">
@@ -144,7 +145,7 @@
         </div>
       </div>
 
-      <!-- 🔹 Card template lives here now -->
+      <!-- Card template -->
       <template id="minibadge-template">
         <article class="card minibadge-card">
           <div class="card-content">
@@ -166,17 +167,36 @@
                   <span class="has-text-weight-semibold item-author"></span>
                 </p>
                 <div class="tags are-small">
-                  <span class="tag is-info item-category"></span>
-                  <span class="tag is-primary is-light item-conferenceYear"></span>
-                  <span class="tag is-warning item-solderingDifficulty"></span>
-                  <!-- Hidden numeric value for sorting/filtering -->
-                  <span class="item-quantityMade" style="display:none;"></span>
-                  <!-- Visible quantity -->
-                  <span class="tag is-light">
-                    Run: <span class="item-quantityDisplay"></span>
-                  </span>
-                  <span class="tag is-light item-boardHouse"></span>
-                </div>
+                    <span class="tag is-info">
+                        Type:
+                        <span class="item-category"></span>
+                    </span>
+
+                    <span class="tag is-primary is-light">
+                        Year:
+                        <span class="item-conferenceYear"></span>
+                    </span>
+
+                    <span class="tag is-warning">
+                        Difficulty:
+                        <span class="item-solderingDifficulty"></span>
+                    </span>
+
+                    <!-- Hidden numeric value for sorting/filtering -->
+                    <span class="item-quantityMade" style="display:none;"></span>
+
+                    <!-- Visible quantity -->
+                    <span class="tag is-light">
+                        Run:
+                        <span class="item-quantityDisplay"></span>
+                    </span>
+
+                    <span class="tag is-light">
+                        PCB:
+                        <span class="item-boardHouse"></span>
+                    </span>
+                    </div>
+
               </div>
             </div>
 
