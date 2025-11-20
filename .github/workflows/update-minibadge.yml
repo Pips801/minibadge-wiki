@@ -2,16 +2,10 @@ name: Update minibadges JSON
 
 on:
   # Manual button in the Actions tab
-  workflow_dispatch:
-    inputs:
-      csv_url:
-        description: 'Optional override for CSV URL (otherwise uses secret MINIBADGE_CSV_URL)'
-        required: false
-        type: string
-
-  # Scheduled run (UTC time). Example: every day at 08:00 UTC
   schedule:
     - cron: '*/5 * * * *'
+  workflow_dispatch:
+
 
 permissions:
   contents: write  # needed so we can push changes
