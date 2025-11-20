@@ -257,6 +257,15 @@ document.addEventListener('DOMContentLoaded', () => {
         });
       }
 
+    // Search box wiring: manually hook up to List.js search
+      if (searchInput) {
+        searchInput.addEventListener('input', () => {
+          const query = searchInput.value;
+          itemList.search(query);
+        });
+      }
+
+
       function updateResultsCount(list) {
         if (!resultsCount) return;
         const current = list.matchingItems.length;
