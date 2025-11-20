@@ -42,7 +42,7 @@ document.addEventListener('DOMContentLoaded', () => {
     '2025.json',
     '2024.json',
     '2023.json'
-    // add more here if needed, e.g. '2024.json'
+    // add more here if needed
   ];
 
   let itemList = null;
@@ -182,7 +182,7 @@ document.addEventListener('DOMContentLoaded', () => {
       hideTagIfEmpty(boardHouseEl);
       hideTagIfEmpty(rarityEl);
 
-      // NEW: remove the details boxes if their content is empty
+      // Remove the details boxes if their content is empty
       const hideBoxIfEmpty = (contentEl) => {
         if (!contentEl) return;
         if (!contentEl.textContent || !contentEl.textContent.trim()) {
@@ -191,9 +191,9 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       };
 
-      hideBoxIfEmpty(specialEl);   // "Special instructions" box
-      hideBoxIfEmpty(solderingEl); // "Assembly & soldering instructions" box
-      hideBoxIfEmpty(howEl);       // "How do people get one?" box
+      hideBoxIfEmpty(specialEl);   // "Special instructions"
+      hideBoxIfEmpty(solderingEl); // "Assembly & soldering instructions"
+      hideBoxIfEmpty(howEl);       // "How do people get one?"
 
       listContainer.appendChild(frag);
     });
@@ -356,48 +356,95 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
+  // ----- Sorting helpers -------------------------------------------------
+
+  function parseTimestamp(str) {
+    if (!str) return 0;
+    // Try native Date parse first
+    const t = Date.parse(str);
+    if (!Number.isNaN(t)) return t;
+
+    // Fallback for Google Form style "M/D/YYYY H:MM:SS"
+    const m = str.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})[ T](\d{1,2}):(\d{2})(?::(\d{2}))?/);
+    if (m) {
+      const month = parseInt(m[1], 10) - 1;
+      const day   = parseInt(m[2], 10);
+      const year  = parseInt(m[3], 10);
+      const hour  = parseInt(m[4], 10);
+      const min   = parseInt(m[5], 10);
+      const sec   = m[6] ? parseInt(m[6], 10) : 0;
+      return new Date(year, month, day, hour, min, sec).getTime();
+    }
+
+    return 0;
+  }
+
+  function parseSortValue(val) {
+    // Examples:
+    // "item-timestamp:desc"
+    // "item-timestamp:asc"
+    // "item-quantityMade:num-asc"
+    // "item-quantityMade:num-desc"
+    const [field, rest] = val.split(':');
+    let mode = 'text';
+    let order = 'asc';
+
+    if (rest) {
+      if (rest === 'asc' || rest === 'desc') {
+        order = rest;
+      } else if (rest.startsWith('num-')) {
+        mode = 'num';
+        order = rest.slice('num-'.length) || 'asc';
+      }
+    }
+
+    return { field, order, mode };
+  }
+
+  function sortItems(itemList, field, order, mode) {
+    if (!field) return;
+
+    if (field === 'item-timestamp') {
+      // Custom date sort
+      itemList.sort(field, {
+        sortFunction: (a, b) => {
+          const av = parseTimestamp(a.values()[field]);
+          const bv = parseTimestamp(b.values()[field]);
+          return order === 'asc' ? av - bv : bv - av;
+        }
+      });
+    } else if (mode === 'num') {
+      // Numeric sort
+      itemList.sort(field, {
+        sortFunction: (a, b) => {
+          const av = parseFloat(a.values()[field] || '0');
+          const bv = parseFloat(b.values()[field] || '0');
+          return order === 'asc' ? av - bv : bv - av;
+        }
+      });
+    } else {
+      // Simple text sort
+      itemList.sort(field, { order });
+    }
+  }
+
   function initSorting(itemList) {
     if (!sortSelect) return;
 
-    sortSelect.addEventListener('change', () => {
-      const val = sortSelect.value;
+    const applySortFromSelect = () => {
+      const val = sortSelect.value || 'item-timestamp:desc';
+      const { field, order, mode } = parseSortValue(val);
+      sortItems(itemList, field, order, mode);
+    };
 
-      switch (val) {
-        case 'title-asc':
-          itemList.sort('item-title', { order: 'asc' });
-          break;
-        case 'title-desc':
-          itemList.sort('item-title', { order: 'desc' });
-          break;
-        case 'year-desc':
-          itemList.sort('item-conferenceYear', { order: 'desc' });
-          break;
-        case 'year-asc':
-          itemList.sort('item-conferenceYear', { order: 'asc' });
-          break;
-        case 'quantity-desc':
-          itemList.sort('item-quantityMade', {
-            order: 'desc',
-            sortFunction: (a, b) => {
-              const av = parseInt(a.values()['item-quantityMade'] || '0', 10);
-              const bv = parseInt(b.values()['item-quantityMade'] || '0', 10);
-              return av - bv;
-            }
-          });
-          break;
-        case 'quantity-asc':
-          itemList.sort('item-quantityMade', {
-            order: 'asc',
-            sortFunction: (a, b) => {
-              const av = parseInt(a.values()['item-quantityMade'] || '0', 10);
-              const bv = parseInt(b.values()['item-quantityMade'] || '0', 10);
-              return av - bv;
-            }
-          });
-          break;
-        default:
-          break;
-      }
+    // Apply initial sort based on the default select option ("Newest first")
+    applySortFromSelect();
+
+    // React to user changes
+    sortSelect.addEventListener('change', () => {
+      applySortFromSelect();
+      // Re-apply filters/search to keep visible set consistent
+      applyFiltersAndSearch(itemList);
     });
   }
 
@@ -416,9 +463,9 @@ document.addEventListener('DOMContentLoaded', () => {
       const totalCount = itemList.items.length;
 
       buildFacetOptions(itemList);
-      initSorting(itemList);
+      initSorting(itemList);          // default: newest first by timestamp
       initFilters(itemList, totalCount);
-      applyFiltersAndSearch(itemList);
+      applyFiltersAndSearch(itemList); // apply current filters/search
     })
     .catch(err => {
       console.error(err);
