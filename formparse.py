@@ -267,8 +267,8 @@ def main():
 
         # Download images and rewrite URLs
         # Profile picture: optional; if you want local copies, uncomment this:
-        # profile_url = download_image_to_repo(raw_profile_url, f"{slug}-profile") or raw_profile_url
-        profile_url = raw_profile_url  # leave remote for now, or change to local as above
+        profile_url = download_image_to_repo(raw_profile_url, f"{slug}-profile") or raw_profile_url
+        # profile_url = raw_profile_url  # leave remote for now, or change to local as above
 
         front_url = download_image_to_repo(raw_front_url, f"{slug}-front") or raw_front_url
         back_url  = download_image_to_repo(raw_back_url,  f"{slug}-back")  or raw_back_url
