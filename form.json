@@ -88,5 +88,23 @@
     "howToAcquire": "Secret prototype minibadges",
     "rarity": "",
     "timestamp": "11/20/2025 14:37:05"
+  },
+  {
+    "title": "Pulp Fiction - Jules Wallet",
+    "author": "alairock",
+    "profilePictureUrl": "images/pulp-fiction-jules-wallet-profile.jpg",
+    "frontImageUrl": "images/pulp-fiction-jules-wallet-front.png",
+    "backImageUrl": "images/pulp-fiction-jules-wallet-back.png",
+    "description": "Jules epic wallet from the movie, Pulp Fiction",
+    "specialInstructions": "",
+    "solderingInstructions": "1 LED and 1 Resistor. Green goes towards the Resistor on the trace.",
+    "solderingDifficulty": "Beginner",
+    "quantityMade": 250,
+    "category": "Personal",
+    "conferenceYear": "2025",
+    "boardHouse": "JLCPCB",
+    "howToAcquire": "Find me on Discord",
+    "rarity": "",
+    "timestamp": "11/20/2025 15:03:49"
   }
 ]
