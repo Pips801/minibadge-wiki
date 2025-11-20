@@ -326,7 +326,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // ----- Bootstrapping: load data, render, init List.js ------------------
 
-  fetch('minibadges.json')
+  fetch('2025.json')
     .then(r => {
       if (!r.ok) throw new Error('Failed to load minibadges.json');
       return r.json();
