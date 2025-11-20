@@ -153,9 +153,9 @@ document.addEventListener('DOMContentLoaded', () => {
       const frontImgEl   = frag.querySelector('.item-frontImageUrl');
       const backImgEl    = frag.querySelector('.item-backImageUrl');
 
-      const profileUrl = item.profilePictureUrl || './cat.jpeg';
-      const frontUrl   = item.frontImageUrl     || './front.png';
-      const backUrl    = item.backImageUrl      || './back.png';
+      const profileUrl = item.profilePictureUrl || './default-profile.jpg';
+      const frontUrl   = item.frontImageUrl     || './default-front.jpg';
+      const backUrl    = item.backImageUrl      || './default-front.jpg';
       const difficulty = item.solderingDifficulty || '';
 
       if (titleEl)      titleEl.textContent      = item.title || '';
