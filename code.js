@@ -10,6 +10,10 @@ document.addEventListener('DOMContentLoaded', () => {
   const searchInput        = document.getElementById('searchInput');
   const resultsCount       = document.getElementById('resultsCount');
 
+  // current search query (we'll use it inside our filter predicate)
+  let currentSearchQuery = '';
+
+  // Escape helper for safe HTML
   function esc(str) {
     return String(str || '')
       .replace(/&/g, '&amp;')
@@ -19,6 +23,7 @@ document.addEventListener('DOMContentLoaded', () => {
       .replace(/'/g, '&#39;');
   }
 
+  // Render one minibadge card
   function renderCard(item) {
     const title                = esc(item.title);
     const author               = esc(item.author);
@@ -150,6 +155,7 @@ document.addEventListener('DOMContentLoaded', () => {
     `;
   }
 
+  // Load minibadges.json and initialize List.js + filters
   fetch('minibadges.json')
     .then(response => {
       if (!response.ok) {
@@ -158,10 +164,12 @@ document.addEventListener('DOMContentLoaded', () => {
       return response.json();
     })
     .then(data => {
+      // Render all cards into the DOM
       data.forEach(item => {
         listContainer.insertAdjacentHTML('beforeend', renderCard(item));
       });
 
+      // Initialize List.js on the populated DOM
       const options = {
         valueNames: [
           'item-title',
@@ -180,6 +188,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const itemList   = new List('items-list', options);
       const totalCount = itemList.items.length;
 
+      // Rebuild a <select> from a set of values
       function rebuildSelect(selectEl, defaultLabel, valuesSet) {
         const previousValue = selectEl.value;
         selectEl.innerHTML = '';
@@ -207,6 +216,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       }
 
+      // Refresh dropdown options based on current matching items
       function refreshFacets(list) {
         const items = list.matchingItems.length ? list.matchingItems : list.items;
 
@@ -234,11 +244,13 @@ document.addEventListener('DOMContentLoaded', () => {
         rebuildSelect(difficultyFilter, 'All difficulties', diffs);
       }
 
-      function applyFilters() {
-        const category   = categoryFilter.value;
-        const year       = yearFilter.value;
-        const difficulty = difficultyFilter.value;
-        const author     = authorFilter.value;
+      // Combined search + dropdown filters
+      function applyAllFilters() {
+        const category   = (categoryFilter.value || '').trim();
+        const year       = (yearFilter.value || '').trim();
+        const difficulty = (difficultyFilter.value || '').trim();
+        const author     = (authorFilter.value || '').trim();
+        const q          = (currentSearchQuery || '').toLowerCase();
 
         itemList.filter(function (item) {
           const v = item.values();
@@ -248,24 +260,35 @@ document.addEventListener('DOMContentLoaded', () => {
           const diffVal = (v['item-solderingDifficulty'] || '').trim();
           const authVal = (v['item-author'] || '').trim();
 
+          // dropdown filters
           if (category && catVal !== category) return false;
           if (year && yearVal !== year) return false;
           if (difficulty && diffVal !== difficulty) return false;
           if (author && authVal !== author) return false;
 
+          // search filter (over several fields)
+          if (q) {
+            const haystack = [
+              v['item-title'] || '',
+              v['item-author'] || '',
+              v['item-category'] || '',
+              v['item-conferenceYear'] || '',
+              v['item-solderingDifficulty'] || '',
+              v['item-description'] || '',
+              v['item-boardHouse'] || '',
+              v['item-howToAcquire'] || ''
+            ]
+              .join(' ')
+              .toLowerCase();
+
+            if (!haystack.includes(q)) return false;
+          }
+
           return true;
         });
       }
 
-    // Search box wiring: manually hook up to List.js search
-      if (searchInput) {
-        searchInput.addEventListener('input', () => {
-          const query = searchInput.value;
-          itemList.search(query);
-        });
-      }
-
-
+      // Update "Showing X of Y minibadges" text
       function updateResultsCount(list) {
         if (!resultsCount) return;
         const current = list.matchingItems.length;
@@ -276,13 +299,23 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       }
 
-      categoryFilter.addEventListener('change', applyFilters);
-      yearFilter.addEventListener('change', applyFilters);
-      difficultyFilter.addEventListener('change', applyFilters);
-      authorFilter.addEventListener('change', applyFilters);
+      // Wire search box: live search as you type
+      if (searchInput) {
+        searchInput.addEventListener('input', (e) => {
+          currentSearchQuery = e.target.value || '';
+          applyAllFilters();
+        });
+      }
 
+      // Hook up filter dropdowns (they all reuse applyAllFilters)
+      categoryFilter.addEventListener('change', applyAllFilters);
+      yearFilter.addEventListener('change', applyAllFilters);
+      difficultyFilter.addEventListener('change', applyAllFilters);
+      authorFilter.addEventListener('change', applyAllFilters);
+
+      // Sort handler (including numeric quantity sort)
       sortSelect.addEventListener('change', () => {
-        const raw = sortSelect.value;
+        const raw = sortSelect.value; // e.g. "item-title:asc" or "item-quantityMade:num-asc"
         const [field, modeAndOrder] = raw.split(':');
         const [mode, orderRaw] = (modeAndOrder || '').split('-');
         const order = orderRaw || modeAndOrder || 'asc';
@@ -300,19 +333,23 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       });
 
+      // Clear filters button
       if (clearFiltersButton) {
         clearFiltersButton.addEventListener('click', () => {
-          if (searchInput) searchInput.value = '';
+          if (searchInput) {
+            searchInput.value = '';
+          }
+          currentSearchQuery  = '';
           categoryFilter.value   = '';
           yearFilter.value       = '';
           difficultyFilter.value = '';
           authorFilter.value     = '';
 
-          itemList.search('');
-          itemList.filter();
+          applyAllFilters();
         });
       }
 
+      // On each List.js update, refresh facets, count, and empty message
       itemList.on('updated', function (list) {
         refreshFacets(list);
         updateResultsCount(list);
@@ -324,6 +361,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       });
 
+      // Initial facet population, sort, and count
       refreshFacets(itemList);
       itemList.sort('item-timestamp', { order: 'desc' });
       updateResultsCount(itemList);
