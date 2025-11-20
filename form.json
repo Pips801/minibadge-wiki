@@ -16,5 +16,23 @@
     "howToAcquire": "Come find me and I will give you one, Come find me and trade with me, At our booth",
     "rarity": "",
     "timestamp": "11/19/2025 19:50:17"
+  },
+  {
+    "title": "Glitch Gallery",
+    "author": "Pips",
+    "profilePictureUrl": "images/glitch-gallery-profile.jpg",
+    "frontImageUrl": "images/glitch-gallery-front.png",
+    "backImageUrl": "images/glitch-gallery-back.png",
+    "description": "A camera minibadge! This minibadge is for the 801 Labs Glitch Gallery event, held on thursday at theFINDlabs!",
+    "specialInstructions": "",
+    "solderingInstructions": "Solder LED, solder resistor, solder pin headers.",
+    "solderingDifficulty": "Intermediate",
+    "quantityMade": 200,
+    "category": "Event",
+    "conferenceYear": "2025",
+    "boardHouse": "JLCPCB",
+    "howToAcquire": "Attend Glitch Gallery on thursday!",
+    "rarity": "",
+    "timestamp": "11/20/2025 11:44:43"
   }
 ]

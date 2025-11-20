@@ -4,23 +4,23 @@ import csv
 import io
 import json
 import os
-from datetime import datetime
 from urllib.request import urlopen
 from urllib.error import URLError, HTTPError
-from urllib.parse import urlparse, parse_qs
+from urllib.parse import urlparse, parse_qs, urlencode, urlunparse
+import time
 
-# --------- Config --------------------------------------------------------
+# --------- Config ---------
 
-DEFAULT_INPUT_CSV_PATH = os.environ.get("MINIBADGE_CSV", "data/google-form-responses.csv")
-DEFAULT_OUTPUT_JSON    = os.environ.get("MINIBADGE_JSON", "data/minibadges_from_form.json")
+DEFAULT_INPUT_CSV_PATH = os.environ.get("MINIBADGE_CSV", "./form.csv")
+DEFAULT_OUTPUT_JSON    = os.environ.get("MINIBADGE_JSON", "./form.json")
 IMAGES_DIR             = os.environ.get("MINIBADGE_IMAGES_DIR", "images")
 
-# Your current Form → JSON mapping
-CSV_MAP = { 
+# Logical field -> Google Form header text
+CSV_MAP = {
     "title":                 "Title of your badge",
     "author":                "Your handle/name",
     "category":              "Type of badge",
-    # conferenceYear is derived from timestamp year
+    "conferenceYear":        "Year produced",  # direct from CSV
     "solderingDifficulty":   "Soldering difficulty",
     "rarity":                "Rarity",
     "quantityMade":          "How many did you make?",
@@ -32,10 +32,10 @@ CSV_MAP = {
     "profilePictureUrl":     "Your profile picture",
     "frontImageUrl":         "Front image",
     "backImageUrl":          "Back image",
-    "timestamp":             "Timestamp",  # default Google Form timestamp
+    "timestamp":             "Timestamp",  # Google Form timestamp
 }
 
-# --------- Helpers -------------------------------------------------------
+# --------- Helpers ---------
 
 
 def _get(row, col_name, default=""):
@@ -53,75 +53,45 @@ def _parse_int(val, default=0):
 
 
 def slugify(title: str) -> str:
-    """
-    Convert a badge title into a filesystem-safe slug.
-    "Scratch and Sniff!" -> "scratch-and-sniff"
-    """
+    """Convert a badge title into a filesystem-safe slug."""
     import re
     t = (title or "").strip().lower()
-    t = re.sub(r"['’]", "", t)          # remove apostrophes
-    t = re.sub(r"[^a-z0-9]+", "-", t)   # non-alphanum -> dash
+    t = re.sub(r"['’]", "", t)
+    t = re.sub(r"[^a-z0-9]+", "-", t)
     t = re.sub(r"-+", "-", t).strip("-")
     return t or "badge"
 
 
+def badge_key(title: str, year: str):
+    """Key used to match CSV rows to existing JSON badges."""
+    slug = slugify(title)
+    return slug, (year or "").strip()
+
+
 def load_csv_reader(csv_url=None, csv_path=None):
-    """
-    Return a csv.DictReader from either a URL or a local path.
-    """
+    """Return a csv.DictReader from either a URL or a local path."""
     if csv_url:
-        print(f"Fetching CSV from URL: {csv_url}")
+        # Add a cache-busting param so Google doesn't serve stale CSV
+        parsed = urlparse(csv_url)
+        qs = parse_qs(parsed.query)
+        qs["_cb"] = [str(int(time.time()))]  # changes every run
+        new_query = urlencode(qs, doseq=True)
+        csv_url_nocache = urlunparse(parsed._replace(query=new_query))
+
+        print(f"[INFO] Fetching CSV from URL: {csv_url_nocache}")
         try:
-            resp = urlopen(csv_url)
+            resp = urlopen(csv_url_nocache)
             charset = resp.headers.get_content_charset() or "utf-8"
             text = resp.read().decode(charset, errors="replace")
         except (HTTPError, URLError) as e:
-            raise SystemExit(f"Failed to fetch CSV from URL: {e}") from e
+            raise SystemExit(f"[ERROR] Failed to fetch CSV from URL: {e}") from e
 
         return csv.DictReader(io.StringIO(text))
-
-    csv_path = csv_path or DEFAULT_INPUT_CSV_PATH
-    if not os.path.exists(csv_path):
-        raise SystemExit(f"CSV file not found: {csv_path}")
-
-    print(f"Reading CSV from file: {csv_path}")
-    f = open(csv_path, newline="", encoding="utf-8")
-    return csv.DictReader(f)
-
-
-def derive_year_from_timestamp(ts_raw: str) -> str:
-    """
-    Derive the conferenceYear from the timestamp string.
-    Assumes Google Forms-style "MM/DD/YYYY HH:MM:SS" but
-    tries a couple of common variants.
-    Returns a string like "2025" or "" if parsing fails.
-    """
-    ts_raw = (ts_raw or "").strip()
-    if not ts_raw:
-        return ""
-
-    formats = [
-        "%m/%d/%Y %H:%M:%S",
-        "%m/%d/%Y %H:%M",
-        "%Y-%m-%d %H:%M:%S",
-        "%Y-%m-%d %H:%M",
-        "%m/%d/%Y",
-    ]
-
-    for fmt in formats:
-        try:
-            dt = datetime.strptime(ts_raw, fmt)
-            return str(dt.year)
-        except ValueError:
-            continue
-
-    return ""
 
 
 def google_drive_to_direct(url: str) -> str:
     """
-    Convert various Google Drive share URLs into a direct download URL.
-    e.g.
+    Convert Google Drive share URLs to direct download URL.
       https://drive.google.com/open?id=FILEID
       https://drive.google.com/file/d/FILEID/view?usp=sharing
     -> https://drive.google.com/uc?export=download&id=FILEID
@@ -148,14 +118,11 @@ def google_drive_to_direct(url: str) -> str:
         except (ValueError, IndexError):
             pass
 
-    # Fallback: return original
     return url
 
 
 def infer_extension_from_content_type(content_type: str, default="jpg") -> str:
-    """
-    Map content-type to an extension.
-    """
+    """Map content-type to an extension."""
     if not content_type:
         return default
     ct = content_type.lower()
@@ -174,15 +141,15 @@ def infer_extension_from_content_type(content_type: str, default="jpg") -> str:
 
 def download_image_to_repo(image_url: str, base_name: str) -> str:
     """
-    Download an image at image_url into IMAGES_DIR with filename base_name + proper extension.
-    Returns a relative path (e.g. 'images/foo-front.jpg') on success,
-    or '' on failure.
+    Download an image into IMAGES_DIR as base_name.<ext>.
+    Returns relative path (e.g. 'images/foo-front.jpg') on success,
+    or the original URL if download fails.
     """
     if not image_url:
         return ""
 
-    # If it's already a non-http path (e.g. we've already processed it), just return it.
-    if not image_url.startswith("http://") and not image_url.startswith("https://"):
+    if not image_url.startswith(("http://", "https://")):
+        # Already local
         return image_url
 
     url = google_drive_to_direct(image_url)
@@ -193,7 +160,7 @@ def download_image_to_repo(image_url: str, base_name: str) -> str:
         data = resp.read()
     except (HTTPError, URLError) as e:
         print(f"[WARN] Failed to download image {image_url}: {e}")
-        return ""
+        return image_url  # fall back to remote URL
 
     ext = infer_extension_from_content_type(content_type, default="jpg")
     os.makedirs(IMAGES_DIR, exist_ok=True)
@@ -209,15 +176,64 @@ def download_image_to_repo(image_url: str, base_name: str) -> str:
     return rel_path
 
 
-# --------- Main ---------------------------------------------------------
+def normalize_header(s: str) -> str:
+    """lowercase, trim, collapse internal whitespace for matching."""
+    return " ".join((s or "").strip().lower().split())
+
+
+def resolve_headers(fieldnames, csv_map):
+    """
+    Build a mapping from logical field (title, author, profilePictureUrl, etc.)
+    to the *actual* CSV header in this file, using fuzzy, case-insensitive matching.
+    """
+    norm_to_actual = {normalize_header(h): h for h in fieldnames if h}
+
+    resolved = {}
+    for logical, expected_header in csv_map.items():
+        if not expected_header:
+            resolved[logical] = None
+            continue
+
+        target_norm = normalize_header(expected_header)
+
+        # Exact normalized match
+        actual = norm_to_actual.get(target_norm)
+        if actual:
+            resolved[logical] = actual
+            continue
+
+        # Fuzzy: look for header that contains the target or vice versa
+        best = None
+        for h in fieldnames:
+            nh = normalize_header(h)
+            if not nh:
+                continue
+            if target_norm in nh or nh in target_norm:
+                best = h
+                break
+
+        resolved[logical] = best
+
+        if best is None:
+            print(f"[WARN] Could not find CSV column for logical '{logical}' "
+                  f"(expected header like '{expected_header}')")
+        else:
+            print(f"[INFO] Mapped logical '{logical}' -> CSV column '{best}'")
+
+    return resolved
+
+
+# --------- Main ---------
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Convert Google Form CSV to minibadges JSON (with images)")
+    parser = argparse.ArgumentParser(
+        description="Convert Google Form CSV to minibadges JSON (update fields, reuse images)."
+    )
     parser.add_argument(
         "--csv-url",
-        help="URL of the CSV export (e.g. Google Form/Sheet 'export?format=csv'). "
-             "If omitted, uses MINIBADGE_CSV_URL or GOOGLE_FORM_CSV_URL env, "
+        help="URL of the CSV export (Google Sheet 'export?format=csv'). "
+             "If omitted, uses MINIBADGE_CSV_URL/GOOGLE_FORM_CSV_URL env, "
              "then falls back to local CSV path.",
     )
     parser.add_argument(
@@ -239,56 +255,87 @@ def main():
     csv_path = None if csv_url else args.csv_path
     out_path = args.output
 
+    print(f"[INFO] Output JSON will be: {out_path}")
+
+    # Load existing JSON as badge/image cache
+    existing_by_key = {}
+    if os.path.exists(out_path):
+        try:
+            with open(out_path, "r", encoding="utf-8") as f:
+                existing_badges = json.load(f) or []
+            for b in existing_badges:
+                k = badge_key(b.get("title"), b.get("conferenceYear", ""))
+                existing_by_key[k] = b
+            print(f"[INFO] Loaded {len(existing_badges)} existing badges from {out_path}")
+        except Exception as e:
+            print(f"[WARN] Failed to load existing JSON from {out_path}: {e}")
+            existing_by_key = {}
+    else:
+        print(f"[INFO] No existing JSON at {out_path}, starting fresh.")
+
     reader = load_csv_reader(csv_url=csv_url, csv_path=csv_path)
 
+    if not reader.fieldnames:
+        raise SystemExit("[ERROR] CSV appears to have no header row (fieldnames is empty).")
+
+    print(f"[INFO] CSV headers: {reader.fieldnames}")
+    header_map = resolve_headers(reader.fieldnames, CSV_MAP)
+
     badges = []
+    row_count = 0
+    new_count = 0
+    reused_count = 0
 
     for row in reader:
-        # Skip rows without a title
-        title = _get(row, CSV_MAP["title"])
-        if not title:
+        row_count += 1
+        title = _get(row, header_map["title"])
+        timestamp = _get(row, header_map["timestamp"])
+        year = _get(row, header_map["conferenceYear"])
+
+        # Completely empty row?
+        if not title and not timestamp and not year:
             continue
 
-        slug = slugify(title)
+        slug = slugify(title) if title else "badge"
+        key = badge_key(title, year)
+        existing = existing_by_key.get(key)
 
-        # Quantity
-        qty_str = _get(row, CSV_MAP["quantityMade"])
+        qty_str = _get(row, header_map["quantityMade"])
         qty = _parse_int(qty_str, default=0)
 
-        # Timestamp + derive year from it
-        timestamp_raw = _get(row, CSV_MAP["timestamp"])
-        timestamp = timestamp_raw
-        conference_year = derive_year_from_timestamp(timestamp_raw)
+        raw_profile_url = _get(row, header_map["profilePictureUrl"])
+        raw_front_url   = _get(row, header_map["frontImageUrl"])
+        raw_back_url    = _get(row, header_map["backImageUrl"])
 
-        # Raw URLs from the form
-        raw_profile_url = _get(row, CSV_MAP["profilePictureUrl"])
-        raw_front_url   = _get(row, CSV_MAP["frontImageUrl"])
-        raw_back_url    = _get(row, CSV_MAP["backImageUrl"])
-
-        # Download images and rewrite URLs
-        # Profile picture: optional; if you want local copies, uncomment this:
-        profile_url = download_image_to_repo(raw_profile_url, f"{slug}-profile") or raw_profile_url
-        # profile_url = raw_profile_url  # leave remote for now, or change to local as above
-
-        front_url = download_image_to_repo(raw_front_url, f"{slug}-front") or raw_front_url
-        back_url  = download_image_to_repo(raw_back_url,  f"{slug}-back")  or raw_back_url
+        if existing:
+            # Reuse image URLs, update all other fields
+            profile_url = existing.get("profilePictureUrl", "")
+            front_url   = existing.get("frontImageUrl", "")
+            back_url    = existing.get("backImageUrl", "")
+            reused_count += 1
+        else:
+            # First time we've seen this badge-year: download images
+            profile_url = download_image_to_repo(raw_profile_url, f"{slug}-profile") or raw_profile_url
+            front_url   = download_image_to_repo(raw_front_url,  f"{slug}-front")   or raw_front_url
+            back_url    = download_image_to_repo(raw_back_url,   f"{slug}-back")    or raw_back_url
+            new_count += 1
 
         badge = {
             "title":               title,
-            "author":              _get(row, CSV_MAP["author"]),
+            "author":              _get(row, header_map["author"]),
             "profilePictureUrl":   profile_url,
             "frontImageUrl":       front_url,
             "backImageUrl":        back_url,
-            "description":         _get(row, CSV_MAP["description"]),
-            "specialInstructions": _get(row, CSV_MAP["specialInstructions"]),
-            "solderingInstructions": _get(row, CSV_MAP["solderingInstructions"]),
-            "solderingDifficulty": _get(row, CSV_MAP["solderingDifficulty"]),
+            "description":         _get(row, header_map["description"]),
+            "specialInstructions": _get(row, header_map["specialInstructions"]),
+            "solderingInstructions": _get(row, header_map["solderingInstructions"]),
+            "solderingDifficulty": _get(row, header_map["solderingDifficulty"]),
             "quantityMade":        qty,
-            "category":            _get(row, CSV_MAP["category"]),
-            "conferenceYear":      conference_year,
-            "boardHouse":          _get(row, CSV_MAP["boardHouse"]),
-            "howToAcquire":        _get(row, CSV_MAP["howToAcquire"]),
-            "rarity":              _get(row, CSV_MAP["rarity"]),
+            "category":            _get(row, header_map["category"]),
+            "conferenceYear":      year,
+            "boardHouse":          _get(row, header_map["boardHouse"]),
+            "howToAcquire":        _get(row, header_map["howToAcquire"]),
+            "rarity":              _get(row, header_map["rarity"]),
             "timestamp":           timestamp,
         }
 
@@ -298,7 +345,12 @@ def main():
     with open(out_path, "w", encoding="utf-8") as f:
         json.dump(badges, f, ensure_ascii=False, indent=2)
 
-    print(f"Wrote {len(badges)} badges to {out_path}")
+    print(f"[INFO] Processed {row_count} CSV rows")
+    print(f"[INFO] Wrote {len(badges)} badges to {out_path}")
+    print(f"[INFO] New badges this run (images downloaded): {new_count}")
+    print(f"[INFO] Existing badges updated (images reused): {reused_count}")
+    if not badges:
+        print("[WARN] No badges produced. Check your CSV headers and CSV_MAP.")
 
 
 if __name__ == "__main__":

@@ -1,0 +1,81 @@
+name: Update minibadges JSON
+
+on:
+  # Manual button in the Actions tab
+  workflow_dispatch:
+    inputs:
+      csv_url:
+        description: 'Optional override for CSV URL (otherwise uses secret MINIBADGE_CSV_URL)'
+        required: false
+        type: string
+
+  # Scheduled run (UTC time). Example: every day at 08:00 UTC
+  schedule:
+    - cron: '0 8 * * *'
+
+permissions:
+  contents: write  # needed so we can push changes
+
+jobs:
+  update-minibadges:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          # Add whatever your script actually needs
+          # If it's pure stdlib, you can delete this step.
+          # Example:
+          # pip install requests
+          true
+
+      - name: Run csv_to_minibadges.py
+        env:
+          # Default CSV URL from secret
+          DEFAULT_CSV_URL: ${{ secrets.MINIBADGE_CSV_URL }}
+        run: |
+          set -e
+
+          # Decide which CSV URL to use:
+          #  - workflow_dispatch input overrides
+          #  - otherwise fall back to secret
+          CSV_URL="${{ github.event.inputs.csv_url }}"
+          if [ -z "$CSV_URL" ]; then
+            CSV_URL="$DEFAULT_CSV_URL"
+          fi
+
+          echo "Using CSV URL: $CSV_URL"
+
+          # Run your script. Adjust paths/args to match your repo.
+          export MINIBADGE_CSV_URL="$CSV_URL"
+
+          python scripts/csv_to_minibadges.py
+
+      - name: Commit and push changes (if any)
+        run: |
+          set -e
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          # Show what changed for logging
+          git status
+          git diff || true
+
+          # Only commit if there are changes
+          if ! git diff --quiet; then
+            git add data/minibadges_from_form.json images || true
+            git commit -m "Update minibadges JSON and images [skip ci]" || true
+            git push
+          else
+            echo "No changes to commit."
+          fi
