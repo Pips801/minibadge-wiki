@@ -330,7 +330,7 @@ document.addEventListener('DOMContentLoaded', () => {
 const DATA_FILES = [
   '2025.json',
    '2024.json',
-  // 'sponsors.json',
+  '2023.json',
 ];
 
 Promise.all(

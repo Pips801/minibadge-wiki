@@ -9,7 +9,7 @@ import sys
 INPUT_PDF = "Pips Build Guide 2025 v3 (1).pdf"
 OUTPUT_JSON = "minibadges_2025_from_pdf.json"
 IMAGES_DIR = "images"
-CONFERENCE_YEAR = "2025"
+CONFERENCE_YEAR = "2023"
 
 
 def page_to_category(page_num: int) -> str:
