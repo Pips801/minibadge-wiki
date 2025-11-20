@@ -214,6 +214,44 @@ def get_front_back_images(fitz_doc, page_index):
     return candidates_sorted[:2]
 
 
+# NEW: page-level board house extraction
+def extract_board_house(lines):
+    """
+    Find the board house for a page by looking for "BOARD HOUSE USED:"
+    and taking the next non-header line as the value.
+    Handles odd cases like "PART OF SET: JLCPCB" right after the header.
+    """
+    bh_idx = next((i for i, l in enumerate(lines) if "BOARD HOUSE USED" in l.upper()), None)
+    if bh_idx is None:
+        return ""
+
+    for l in lines[bh_idx + 1 :]:
+        s = l.strip()
+        if not s:
+            continue
+        upper = s.upper()
+
+        # Special case: "PART OF SET: JLCPCB" used on at least one page
+        if "PART OF SET" in upper:
+            if ":" in s:
+                after = s.split(":", 1)[1].strip()
+                # If the part after ':' looks like a name (has letters), treat it as board house
+                if after and re.search(r"[A-Za-z]", after):
+                    return after
+            break
+
+        # Stop if we hit a different header
+        if ("DIFFICULTY:" in upper or "RARITY:" in upper or
+            "BOARD/LED TYPE" in upper or "ASSEMBLY INSTRUCTIONS" in upper or
+            "HOW DO I GET ONE?" in upper):
+            break
+
+        # Otherwise this is our board house line
+        return s
+
+    return ""
+
+
 def main(pdf_path: str, output_path: str, images_dir: str):
     if not os.path.exists(pdf_path):
         print(f"ERROR: PDF not found: {pdf_path}")
@@ -241,6 +279,9 @@ def main(pdf_path: str, output_path: str, images_dir: str):
             core = parse_badge_core(blocks[0])
             if not core:
                 continue
+
+            # NEW: board house from the whole page
+            board_house = extract_board_house(lines)
 
             title = core.get("title", "")
             slug = slugify(title)
@@ -279,7 +320,8 @@ def main(pdf_path: str, output_path: str, images_dir: str):
                 "quantityMade": 0,
                 "category": category,
                 "conferenceYear": CONFERENCE_YEAR,
-                "boardHouse": "",
+                # CHANGED: now use parsed board house
+                "boardHouse": board_house,
                 "howToAcquire": core.get("howToAcquire", ""),
                 "rarity": core.get("rarity", ""),
                 "timestamp": "",
