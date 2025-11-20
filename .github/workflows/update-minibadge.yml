@@ -38,7 +38,7 @@ jobs:
           # pip install requests
           true
 
-      - name: Run csv_to_minibadges.py
+      - name: Run formparse.py
         env:
           # Default CSV URL from secret
           DEFAULT_CSV_URL: ${{ secrets.MINIBADGE_CSV_URL }}
@@ -58,7 +58,7 @@ jobs:
           # Run your script. Adjust paths/args to match your repo.
           export MINIBADGE_CSV_URL="$CSV_URL"
 
-          python scripts/csv_to_minibadges.py
+          python scripts/formparse.py
 
       - name: Commit and push changes (if any)
         run: |
