@@ -117,7 +117,6 @@
                 </div>
               </div>
             </div>
-          </div>
 
           <!-- Clear filters + results count (own column, inline with others) -->
           <div class="column is-6-tablet is-3-desktop">
@@ -145,6 +144,99 @@
         </div>
       </div>
 
+      <!-- 🔹 Card template lives here now -->
+      <template id="minibadge-template">
+        <article class="card minibadge-card">
+          <div class="card-content">
+            <div class="media">
+              <div class="media-left">
+                <figure class="image is-48x48">
+                  <img
+                    loading="lazy"
+                    class="is-rounded item-profilePictureUrl"
+                    src=""
+                    alt=""
+                  >
+                </figure>
+              </div>
+              <div class="media-content">
+                <p class="title is-4 item-title"></p>
+                <p class="subtitle is-6">
+                  by
+                  <span class="has-text-weight-semibold item-author"></span>
+                </p>
+                <div class="tags are-small">
+                  <span class="tag is-info item-category"></span>
+                  <span class="tag is-primary is-light item-conferenceYear"></span>
+                  <span class="tag is-warning item-solderingDifficulty"></span>
+                  <!-- Hidden numeric value for sorting/filtering -->
+                  <span class="item-quantityMade" style="display:none;"></span>
+                  <!-- Visible quantity -->
+                  <span class="tag is-light">
+                    Run: <span class="item-quantityDisplay"></span>
+                  </span>
+                  <span class="tag is-light item-boardHouse"></span>
+                </div>
+              </div>
+            </div>
+
+            <div class="columns is-variable is-4 mt-3">
+              <div class="column is-4">
+                <figure class="image mb-3">
+                  <img
+                    loading="lazy"
+                    class="item-frontImageUrl"
+                    src=""
+                    alt=""
+                  >
+                </figure>
+                <figure class="image">
+                  <img
+                    loading="lazy"
+                    class="item-backImageUrl"
+                    src=""
+                    alt=""
+                  >
+                </figure>
+              </div>
+
+              <div class="column">
+                <div class="content item-description"></div>
+
+                <div class="mb-2">
+                  <details>
+                    <summary class="has-text-weight-semibold">
+                      Special instructions
+                    </summary>
+                    <div class="content item-specialInstructions mt-2"></div>
+                  </details>
+                </div>
+
+                <div class="mb-2">
+                  <details>
+                    <summary class="has-text-weight-semibold">
+                      Assembly &amp; soldering instructions
+                    </summary>
+                    <div class="content item-solderingInstructions mt-2"></div>
+                  </details>
+                </div>
+
+                <div class="mb-2">
+                  <details>
+                    <summary class="has-text-weight-semibold">
+                      How do people get one?
+                    </summary>
+                    <div class="content item-howToAcquire mt-2"></div>
+                  </details>
+                </div>
+
+                <p class="is-size-7 has-text-grey-light item-timestamp mt-3"></p>
+              </div>
+            </div>
+          </div>
+        </article>
+      </template>
+
       <!-- Badge list container for List.js -->
       <div id="items-list">
         <div class="minibadge-list list">
@@ -165,7 +257,7 @@
 
   <!-- List.js -->
   <script src="https://cdn.jsdelivr.net/npm/list.js@2.3.1/dist/list.min.js"></script>
-  <!-- custom code logic -->
+  <!-- Your custom logic -->
   <script src="code.js"></script>
 </body>
 </html>
