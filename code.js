@@ -11,7 +11,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const searchInput        = document.getElementById('searchInput');
   const resultsCount       = document.getElementById('resultsCount');
 
-  // current search query
+  // current search query (for combined search + filters)
   let currentSearchQuery = '';
 
   // Load minibadges.json and initialize List.js + filters
@@ -36,6 +36,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const categoryEl       = fragment.querySelector('.item-category');
         const yearEl           = fragment.querySelector('.item-conferenceYear');
         const diffEl           = fragment.querySelector('.item-solderingDifficulty');
+        const diffTagEl        = fragment.querySelector('.difficulty-tag');
         const qtyHiddenEl      = fragment.querySelector('.item-quantityMade');
         const qtyDisplayEl     = fragment.querySelector('.item-quantityDisplay');
         const boardHouseEl     = fragment.querySelector('.item-boardHouse');
@@ -57,7 +58,46 @@ document.addEventListener('DOMContentLoaded', () => {
         if (authorEl)     authorEl.textContent     = item.author || '';
         if (categoryEl)   categoryEl.textContent   = item.category || '';
         if (yearEl)       yearEl.textContent       = item.conferenceYear || '';
-        if (diffEl)       diffEl.textContent       = item.solderingDifficulty || '';
+
+        // Difficulty text
+        if (diffEl) {
+          diffEl.textContent = item.solderingDifficulty || '';
+        }
+
+        // Difficulty color (green → red)
+        if (diffTagEl) {
+          diffTagEl.classList.remove(
+            'is-success',
+            'is-success-light',
+            'is-warning',
+            'is-danger',
+            'is-danger-light',
+            'is-info',
+            'is-primary',
+            'is-link',
+            'is-light'
+          );
+
+          const d = (item.solderingDifficulty || '').trim().toLowerCase();
+
+          if (d === 'pre-soldered') {
+            // easiest → strong green
+            diffTagEl.classList.add('is-success');
+          } else if (d === 'beginner') {
+            // light green
+            diffTagEl.classList.add('is-success', 'is-light');
+          } else if (d === 'intermediate') {
+            // yellow / warning
+            diffTagEl.classList.add('is-warning');
+          } else if (d === 'advanced') {
+            // orange-ish / softer red
+            diffTagEl.classList.add('is-danger', 'is-light');
+          } else if (d === 'torture') {
+            // hardest → strong red
+            diffTagEl.classList.add('is-danger');
+          }
+        }
+
         if (qtyHiddenEl)  qtyHiddenEl.textContent  = item.quantityMade || '';
         if (qtyDisplayEl) qtyDisplayEl.textContent = item.quantityMade || '';
         if (boardHouseEl) boardHouseEl.textContent = item.boardHouse || '';
