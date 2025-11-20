@@ -34,5 +34,23 @@
     "howToAcquire": "Attend Glitch Gallery on thursday!",
     "rarity": "",
     "timestamp": "11/20/2025 11:44:43"
+  },
+  {
+    "title": "Crown Burger",
+    "author": "Pips",
+    "profilePictureUrl": "images/crown-burger-profile.jpg",
+    "frontImageUrl": "images/crown-burger-front.png",
+    "backImageUrl": "images/crown-burger-back.png",
+    "description": "All hail fry sauce",
+    "specialInstructions": "",
+    "solderingInstructions": "",
+    "solderingDifficulty": "Advanced",
+    "quantityMade": 50,
+    "category": "Personal",
+    "conferenceYear": "2026",
+    "boardHouse": "JLCPCB",
+    "howToAcquire": "Come find me!",
+    "rarity": "",
+    "timestamp": "11/20/2025 12:33:18"
   }
 ]
