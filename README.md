@@ -1,4 +1,7 @@
 # Minibadge Wiki
+
+<img width="1274" height="762" alt="image" src="https://github.com/user-attachments/assets/86b28b9f-c9be-4a7c-ad2b-602278a67b6b" />
+
 https://minibadge.wiki/ 
 
 A filterable/searchable archive of every minibadge I could get my hands on. Data sources come from 2023, 2024, and 2025 build guides, as well as a new minibadge submission forum.
