@@ -88,6 +88,16 @@ def load_csv_reader(csv_url=None, csv_path=None):
 
         return csv.DictReader(io.StringIO(text))
 
+    # Fallback: local CSV
+    csv_path = csv_path or DEFAULT_INPUT_CSV_PATH
+    print(f"[INFO] Reading CSV from local path: {csv_path}")
+    try:
+        f = open(csv_path, "r", encoding="utf-8", newline="")
+    except OSError as e:
+        raise SystemExit(f"[ERROR] Failed to open local CSV {csv_path}: {e}") from e
+
+    return csv.DictReader(f)
+
 
 def google_drive_to_direct(url: str) -> str:
     """
@@ -215,8 +225,10 @@ def resolve_headers(fieldnames, csv_map):
         resolved[logical] = best
 
         if best is None:
-            print(f"[WARN] Could not find CSV column for logical '{logical}' "
-                  f"(expected header like '{expected_header}')")
+            print(
+                f"[WARN] Could not find CSV column for logical '{logical}' "
+                f"(expected header like '{expected_header}')"
+            )
         else:
             print(f"[INFO] Mapped logical '{logical}' -> CSV column '{best}'")
 
@@ -281,12 +293,18 @@ def main():
     print(f"[INFO] CSV headers: {reader.fieldnames}")
     header_map = resolve_headers(reader.fieldnames, CSV_MAP)
 
+    # Read all rows so we can know total minibadge count up front
+    rows = list(reader)
+    total_rows = len(rows)
+    print(f"[INFO] Found {total_rows} minibadges (CSV data rows).")
+
     badges = []
     row_count = 0
+    processed_count = 0
     new_count = 0
     reused_count = 0
 
-    for row in reader:
+    for row in rows:
         row_count += 1
         title = _get(row, header_map["title"])
         timestamp = _get(row, header_map["timestamp"])
@@ -340,8 +358,14 @@ def main():
         }
 
         badges.append(badge)
+        processed_count += 1
+        print(f"[INFO] {processed_count} of {total_rows} minibadges processed")
 
-    os.makedirs(os.path.dirname(out_path), exist_ok=True)
+    # ---- Safe directory creation for output ----
+    dir_name = os.path.dirname(out_path)
+    if dir_name:
+        os.makedirs(dir_name, exist_ok=True)
+
     with open(out_path, "w", encoding="utf-8") as f:
         json.dump(badges, f, ensure_ascii=False, indent=2)
 

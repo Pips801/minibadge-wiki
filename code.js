@@ -39,8 +39,8 @@ document.addEventListener('DOMContentLoaded', () => {
   // Multi-file loader
   const DATA_FILES = [
     'form.json',
-    '2025.json',
-    '2024.json',
+    '2025_form.json',
+    '2024_form.json',
     '2023.json'
     // add more here if needed
   ];
