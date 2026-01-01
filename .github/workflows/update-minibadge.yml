@@ -67,7 +67,7 @@ jobs:
 
           # Only commit if there are changes
           if ! git diff --quiet; then
-            git add form.json images || true
+            git add 2026_form.json images || true
             git commit -m "Update minibadges JSON and images [skip ci]" || true
             git push
           else
