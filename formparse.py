@@ -12,7 +12,7 @@ import time
 # --------- Config ---------
 
 DEFAULT_INPUT_CSV_PATH = os.environ.get("MINIBADGE_CSV", "./form.csv")
-DEFAULT_OUTPUT_JSON    = os.environ.get("MINIBADGE_JSON", "./form.json")
+DEFAULT_OUTPUT_JSON    = os.environ.get("MINIBADGE_JSON", "./2026_form.json")
 IMAGES_DIR             = os.environ.get("MINIBADGE_IMAGES_DIR", "images/2026")
 
 # Logical field -> Google Form header text
