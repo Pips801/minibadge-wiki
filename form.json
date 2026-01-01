@@ -106,5 +106,23 @@
     "howToAcquire": "Find me on Discord",
     "rarity": "",
     "timestamp": "11/20/2025 15:03:49"
+  },
+  {
+    "title": "Phone charger",
+    "author": "Pips",
+    "profilePictureUrl": "images/2026/phone-charger-profile.jpg",
+    "frontImageUrl": "images/2026/phone-charger-front.png",
+    "backImageUrl": "images/2026/phone-charger-back.png",
+    "description": "Have you ever needed to charge your phone (or other stuff), but all you have lying around is a SAINTCON badge? You’re in luck! This minibadge will charge (up to 500mA) anything USB-C that you plug into it! Charge your phone! Charge your headphones! Charge a laptop! (not really) Charge another badge! The world is your charger!",
+    "specialInstructions": "",
+    "solderingInstructions": "Solder the minibadge pins and charge away!",
+    "solderingDifficulty": "Pre-soldered",
+    "quantityMade": 5,
+    "category": "Personal",
+    "conferenceYear": "2026",
+    "boardHouse": "JLCPCB",
+    "howToAcquire": "Purchase it on my Tindie store, or find me during the conference.",
+    "rarity": "",
+    "timestamp": "1/1/2026 14:31:40"
   }
 ]
