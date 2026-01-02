@@ -5,6 +5,9 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>MiniBadge — Stats</title>
 
+  <!-- Bulma CSS (match home page) -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@1.0.0/css/bulma.min.css" />
+
   <!-- ApexCharts (pretty, supports dark themes) -->
   <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 
@@ -25,72 +28,123 @@
     </div>
   </header>
 
-  <main class="container">
-    <section class="controls">
-      <label>
-        Year:
-        <select id="yearFilter">
-          <option value="all">All years</option>
-        </select>
-      </label>
+  <main class="container section">
+    <!-- Controls: use a Bulma box like on home page -->
+    <div class="box">
+      <div class="columns is-multiline is-vcentered">
+        <div class="column is-3-tablet is-2-desktop">
+          <label class="label">Year</label>
+          <div class="control">
+            <div class="select is-fullwidth">
+              <select id="yearFilter">
+                <option value="all">All years</option>
+              </select>
+            </div>
+          </div>
+        </div>
 
-      <label>
-        Person search:
-        <input id="personSearch" placeholder="Search person name" />
-      </label>
+        <div class="column is-5-tablet is-6-desktop">
+          <label class="label">Person search</label>
+          <div class="control">
+            <input id="personSearch" class="input" placeholder="Search person name" />
+          </div>
+        </div>
 
-      <button id="resetFilters">Clear filters</button>
-    </section>
-
-    <section class="summary-cards">
-      <div class="card">
-        <h3 id="totalBadges">—</h3>
-        <p>Total badges loaded</p>
+        <div class="column is-4-tablet is-4-desktop has-text-right">
+          <label class="label">&nbsp;</label>
+          <div class="control">
+            <button id="resetFilters" class="button is-light">Clear filters</button>
+          </div>
+        </div>
       </div>
-      <div class="card">
-        <h3 id="uniquePeople">—</h3>
-        <p>Unique people</p>
-      </div>
-      <div class="card">
-        <h3 id="yearsCount">—</h3>
-        <p>Years found</p>
-      </div>
-    </section>
+    </div>
 
-    <section class="charts">
-      <div class="chart-card">
-        <h2>Badges per Year</h2>
-        <div id="chartBadgesPerYear"></div>
-      </div>
-
-      <div class="chart-card">
-        <h2>Top People (by badges)</h2>
-        <div id="chartBadgesPerPerson"></div>
-      </div>
-
-      <div class="chart-card">
-        <h2>Badge Categories per Year (stacked)</h2>
-        <div id="chartCategoriesPerYear"></div>
-      </div>
-    </section>
-
-    <section class="tables">
-      <div class="table-card">
-        <h3>Top people (table)</h3>
-        <table id="tableTopPeople">
-          <thead><tr><th>Person</th><th>Badges</th></tr></thead>
-          <tbody></tbody>
-        </table>
+    <!-- Summary cards -->
+    <div class="columns">
+      <div class="column">
+        <div class="card">
+          <div class="card-content">
+            <h3 id="totalBadges">—</h3>
+            <p>Total badges loaded</p>
+          </div>
+        </div>
       </div>
 
-      <div class="table-card">
-        <h3>Breakdown by year & category</h3>
-        <table id="tableByYearCategory">
-          <thead><tr><th>Year</th><th>Category</th><th>Count</th></tr></thead>
-          <tbody></tbody>
-        </table>
+      <div class="column">
+        <div class="card">
+          <div class="card-content">
+            <h3 id="uniquePeople">—</h3>
+            <p>Unique people</p>
+          </div>
+        </div>
       </div>
-    </section>
+
+      <div class="column">
+        <div class="card">
+          <div class="card-content">
+            <h3 id="yearsCount">—</h3>
+            <p>Years found</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Charts: use Bulma columns and keep chart-card class for styling -->
+    <div class="columns is-multiline charts">
+      <div class="column is-12">
+        <div class="chart-card card">
+          <div class="card-content">
+            <h2>Badges per Year</h2>
+            <div id="chartBadgesPerYear"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="column is-12">
+        <div class="chart-card card">
+          <div class="card-content">
+            <h2>Top People (by badges)</h2>
+            <div id="chartBadgesPerPerson"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="column is-12">
+        <div class="chart-card card">
+          <div class="card-content">
+            <h2>Badge Categories per Year (stacked)</h2>
+            <div id="chartCategoriesPerYear"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tables -->
+    <div class="columns is-multiline">
+      <div class="column is-6">
+        <div class="table-card card">
+          <div class="card-content">
+            <h3>Top people (table)</h3>
+            <table id="tableTopPeople">
+              <thead><tr><th>Person</th><th>Badges</th></tr></thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <div class="column is-6">
+        <div class="table-card card">
+          <div class="card-content">
+            <h3>Breakdown by year & category</h3>
+            <table id="tableByYearCategory">
+              <thead><tr><th>Year</th><th>Category</th><th>Count</th></tr></thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
   </main>
 
   <footer class="site-footer">
