@@ -45,8 +45,64 @@
     return JSON.stringify(v);
   }
 
+  // Candidates for explicit year fields inside a record
+  const YEAR_PREFERENCES = ['year', 'yr', 'submission_year', 'badge_year'];
+
+  // Try to determine the year for a given record. Returns a string year like '2026' or the fallback.
+  function detectRecordYear(record, fallbackYear) {
+    // 1) explicit year-like fields
+    const yearKey = findKey(record, YEAR_PREFERENCES);
+    if (yearKey) {
+      const v = record[yearKey];
+      if (typeof v === 'number' && v > 1900 && v < 3000) return String(v);
+      if (typeof v === 'string') {
+        const m = v.match(/(19|20)\d{2}/);
+        if (m) return m[0];
+        const n = parseInt(v, 10);
+        if (!isNaN(n) && n > 1900 && n < 3000) return String(n);
+      }
+    }
+
+    // 2) date-like fields
+    const dateKey = findKey(record, FIELD_PREFERENCES.date);
+    if (dateKey) {
+      const dv = record[dateKey];
+      if (typeof dv === 'number') {
+        // could be a year, timestamp, or YYYYMMDD
+        if (String(dv).length === 4 && dv > 1900 && dv < 3000) return String(dv);
+        try {
+          const d = new Date(dv);
+          if (!isNaN(d.getTime())) return String(d.getFullYear());
+        } catch (e) {}
+        const s = String(dv);
+        const m = s.match(/(19|20)\d{2}/);
+        if (m) return m[0];
+      } else if (typeof dv === 'string') {
+        const m = dv.match(/(19|20)\d{2}/);
+        if (m) return m[0];
+        const d = new Date(dv);
+        if (!isNaN(d.getTime())) return String(d.getFullYear());
+      } else if (dv && (dv.year || dv.y)) {
+        const y = dv.year || dv.y;
+        if (typeof y === 'number' && y > 1900 && y < 3000) return String(y);
+        if (typeof y === 'string') {
+          const m = y.match(/(19|20)\d{2}/);
+          if (m) return m[0];
+        }
+      }
+    }
+
+    // fallback to file-year if possible
+    if (fallbackYear) {
+      const m = String(fallbackYear).match(/(19|20)\d{2}/);
+      if (m) return m[0];
+      return String(fallbackYear);
+    }
+    return 'unknown';
+  }
+
   // Build list of candidate filenames to fetch
-  const years = [];
+  const years = []; 
   for (let y = START_YEAR; y <= currentYear; y++) years.push(y);
   const candidateFiles = years.map(y => `/${y}_form.json`);
 
@@ -366,9 +422,10 @@
       const year = match ? match[1] : 'unknown';
       const arr = normalizeJsonPayload(r.json);
       for (const rec of arr) {
-        rawEntries.push({ year, record: rec });
+        const recordYear = detectRecordYear(rec, year);
+        rawEntries.push({ year: recordYear, record: rec });
+        availableYears.add(recordYear);
       }
-      availableYears.add(year);
     }
 
     // initial aggregates
