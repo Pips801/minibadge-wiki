@@ -124,12 +124,6 @@ h1, h2, h3, h4, .title, .subtitle {
   color: #98a2b3;
 }
 
-/* Ensure images in cards stand out */
-.minibadge-card .image img {
-  border-radius: 4px;
-  border: 1px solid rgba(255,255,255,0.02);
-}
-
 /* Make table backgrounds match */
 table {
   width: 100%;
