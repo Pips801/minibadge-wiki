@@ -108,21 +108,39 @@
     "timestamp": "11/20/2025 15:03:49"
   },
   {
-    "title": "Phone charger",
+    "title": "IPEX to SMA adapter Minibadge",
     "author": "Pips",
-    "profilePictureUrl": "images/2026/phone-charger-profile.jpg",
-    "frontImageUrl": "images/2026/phone-charger-front.png",
-    "backImageUrl": "images/2026/phone-charger-back.png",
-    "description": "Have you ever needed to charge your phone (or other stuff), but all you have lying around is a SAINTCON badge? You’re in luck! This minibadge will charge (up to 500mA) anything USB-C that you plug into it! Charge your phone! Charge your headphones! Charge a laptop! (not really) Charge another badge! The world is your charger!",
+    "profilePictureUrl": "images/2026/ipex-to-sma-adapter-minibadge-profile.jpg",
+    "frontImageUrl": "images/2026/ipex-to-sma-adapter-minibadge-front.png",
+    "backImageUrl": "images/2026/ipex-to-sma-adapter-minibadge-back.png",
+    "description": "A minibadge (meant for use with my Meshtastic Minibadge) that converts I-PEX to SMA, so you can have a vertical SMA antenna.",
     "specialInstructions": "",
-    "solderingInstructions": "Solder the minibadge pins and charge away!",
+    "solderingInstructions": "Solder pin headers and plug in your IPEX to IPEX cable, and screw in your SMA antenna!",
     "solderingDifficulty": "Pre-soldered",
-    "quantityMade": 5,
+    "quantityMade": 20,
     "category": "Personal",
     "conferenceYear": "2026",
     "boardHouse": "JLCPCB",
-    "howToAcquire": "Purchase it on my Tindie store, or find me during the conference.",
+    "howToAcquire": "Find me during the conference, or buy one from my Tindie store.",
     "rarity": "",
-    "timestamp": "1/1/2026 14:31:40"
+    "timestamp": "1/2/2026 14:22:24"
+  },
+  {
+    "title": "Charger Minibadge",
+    "author": "Pips",
+    "profilePictureUrl": "images/2026/charger-minibadge-profile.jpg",
+    "frontImageUrl": "images/2026/charger-minibadge-front.png",
+    "backImageUrl": "images/2026/charger-minibadge-back.png",
+    "description": "Have you ever needed to charge your phone (or other stuff), but all you have lying around is a SAINTCON badge? You’re in luck! This minibadge will charge (up to 500mA) anything USB-C that you plug into it! Charge your phone! Charge your headphones! Charge a laptop! (not really) Charge another badge! The world is your charger!",
+    "specialInstructions": "",
+    "solderingInstructions": "Solder pin headers and start charging!",
+    "solderingDifficulty": "Pre-soldered",
+    "quantityMade": 35,
+    "category": "Personal",
+    "conferenceYear": "2026",
+    "boardHouse": "JLCPCB",
+    "howToAcquire": "Trade with me or buy one from my Tindie store!",
+    "rarity": "",
+    "timestamp": "1/2/2026 15:03:31"
   }
 ]
