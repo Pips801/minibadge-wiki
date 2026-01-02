@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>MiniBadge — Stats</title>
+
+  <!-- ApexCharts (pretty, supports dark themes) -->
+  <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+
+  <link rel="stylesheet" href="assets/css/stats.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="container">
+      <h1>MiniBadge — Stats</h1>
+      <nav class="nav">
+        <a href="/">Home</a>
+        <a href="/stats/">Stats</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="controls">
+      <label>
+        Year:
+        <select id="yearFilter">
+          <option value="all">All years</option>
+        </select>
+      </label>
+
+      <label>
+        Person search:
+        <input id="personSearch" placeholder="Search person name" />
+      </label>
+
+      <button id="resetFilters">Reset</button>
+      <button id="downloadCsv">Download CSV</button>
+    </section>
+
+    <section class="summary-cards">
+      <div class="card">
+        <h3 id="totalBadges">—</h3>
+        <p>Total badges loaded</p>
+      </div>
+      <div class="card">
+        <h3 id="uniquePeople">—</h3>
+        <p>Unique people</p>
+      </div>
+      <div class="card">
+        <h3 id="yearsCount">—</h3>
+        <p>Years found</p>
+      </div>
+    </section>
+
+    <section class="charts">
+      <div class="chart-card">
+        <h2>Badges per Year</h2>
+        <div id="chartBadgesPerYear"></div>
+      </div>
+
+      <div class="chart-card">
+        <h2>Top People (by badges)</h2>
+        <div id="chartBadgesPerPerson"></div>
+      </div>
+
+      <div class="chart-card">
+        <h2>Badge Categories per Year (stacked)</h2>
+        <div id="chartCategoriesPerYear"></div>
+      </div>
+    </section>
+
+    <section class="tables">
+      <div class="table-card">
+        <h3>Top people (table)</h3>
+        <table id="tableTopPeople">
+          <thead><tr><th>Person</th><th>Badges</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+
+      <div class="table-card">
+        <h3>Breakdown by year & category</h3>
+        <table id="tableByYearCategory">
+          <thead><tr><th>Year</th><th>Category</th><th>Count</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="notes">
+      <p>Notes: this page attempts to fetch files named <code>{year}_form.json</code> from the site root (for example <code>/2023_form.json</code>). Only files that respond successfully are used.</p>
+      <p>If your JSON uses different field names for person or category, edit the detection mapping at the top of <code>assets/js/stats.js</code>.</p>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <small>MiniBadge stats — generated on <span id="generatedDate"></span></small>
+    </div>
+  </footer>
+
+  <script src="assets/js/stats.js"></script>
+</body>
+</html>
