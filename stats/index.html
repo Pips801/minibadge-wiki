@@ -8,15 +8,19 @@
   <!-- ApexCharts (pretty, supports dark themes) -->
   <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 
+  <!-- shared site styles -->
+  <link rel="stylesheet" href="/assets/css/site.css" />
+
   <link rel="stylesheet" href="assets/css/stats.css" />
 </head>
 <body>
   <header class="site-header">
     <div class="container">
-      <h1>MiniBadge — Stats</h1>
+      <h1>MiniBadge Wiki - Stats</h1>
       <nav class="nav">
         <a href="/">Home</a>
         <a href="/stats/">Stats</a>
+        <a href="https://docs.google.com/forms/d/e/1FAIpQLSeAOJycPVQHqQyn2cpl7OsgC0UCEfwmARElo-W8V1likq_fSA/viewform?usp=dialog" target="_blank" rel="noopener">Submit badge</a>
       </nav>
     </div>
   </header>
@@ -35,8 +39,7 @@
         <input id="personSearch" placeholder="Search person name" />
       </label>
 
-      <button id="resetFilters">Reset</button>
-      <button id="downloadCsv">Download CSV</button>
+      <button id="resetFilters">Clear filters</button>
     </section>
 
     <section class="summary-cards">
@@ -87,11 +90,6 @@
           <tbody></tbody>
         </table>
       </div>
-    </section>
-
-    <section class="notes">
-      <p>Notes: this page attempts to fetch files named <code>{year}_form.json</code> from the site root (for example <code>/2023_form.json</code>). Only files that respond successfully are used.</p>
-      <p>If your JSON uses different field names for person or category, edit the detection mapping at the top of <code>assets/js/stats.js</code>.</p>
     </section>
   </main>
 

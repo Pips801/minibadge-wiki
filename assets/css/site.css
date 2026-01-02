@@ -1,0 +1,144 @@
+/* Shared site styles: layout, fonts, header/nav, basic card styles */
+body {
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-size: 16px;
+  line-height: 1.45;
+  color: #e6eef4; /* light text */
+  background: #0b1720; /* dark page background (matches header) */
+  margin: 0;
+  -webkit-font-smoothing: antialiased;
+}
+
+.container {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 0 16px;
+}
+
+.site-header {
+  background: #0b1720;
+  color: #e6eef4;
+  padding: 18px 0;
+  border-bottom: 1px solid rgba(230,238,244,0.04);
+}
+.site-header .container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.site-header h1 {
+  margin: 0;
+  font-size: 1.125rem;
+  font-weight: 600;
+}
+.site-header .nav a {
+  color: #e6eef4;
+  text-decoration: none;
+  margin-left: 16px;
+  font-weight: 500;
+}
+
+/* Page sections / spacing */
+.section {
+  padding-top: 24px;
+  padding-bottom: 24px;
+}
+
+/* Footer */
+.site-footer {
+  margin-top: 32px;
+  padding: 12px 0;
+  color: #98a2b3;
+  border-top: 1px solid rgba(15,23,32,0.04);
+}
+
+/* Cards, boxes, table-cards: dark backgrounds and light text */
+.card,
+.table-card,
+.box,
+.minibadge-card {
+  background: #07121a; /* slightly darker than header to create depth */
+  color: #e6eef4;
+  border-radius: 6px;
+  padding: 12px;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.35);
+  border: 1px solid rgba(230,238,244,0.03);
+}
+
+/* Keep charts visually dark like before */
+.charts .chart-card {
+  background: #0b1720;
+  color: #e6eef4;
+  border-radius: 6px;
+  padding: 12px;
+}
+.charts .chart-card h2 {
+  color: #e6eef4;
+  font-size: 1rem;
+  margin: 0 0 8px 0;
+}
+
+/* Form controls (inputs, selects) - dark style */
+.input,
+.select select,
+textarea {
+  background: #07121a;
+  color: #e6eef4;
+  border: 1px solid rgba(230,238,244,0.06);
+}
+.button {
+  background: rgba(230,238,244,0.06);
+  color: #e6eef4;
+  border: 1px solid rgba(230,238,244,0.04);
+}
+.button.is-light {
+  background: rgba(230,238,244,0.04);
+  color: #e6eef4;
+}
+
+/* Tags */
+.tag {
+  background: rgba(230,238,244,0.06);
+  color: #e6eef4;
+  border-radius: 4px;
+  padding: 0.25em 0.5em;
+  margin-right: 6px;
+}
+.tag.is-info {
+  background: rgba(16,185,129,0.12);
+  color: #a7f3d0;
+}
+
+/* Headings and subtitles */
+h1, h2, h3, h4, .title, .subtitle {
+  color: #e6eef4;
+}
+
+/* Helper text */
+.help, .is-size-7, .has-text-grey-light {
+  color: #98a2b3;
+}
+
+/* Ensure images in cards stand out */
+.minibadge-card .image img {
+  border-radius: 4px;
+  border: 1px solid rgba(255,255,255,0.02);
+}
+
+/* Make table backgrounds match */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  color: #e6eef4;
+}
+table thead th {
+  background: transparent;
+  color: #e6eef4;
+  text-align: left;
+  padding: 8px 6px;
+  border-bottom: 1px solid rgba(230,238,244,0.04);
+}
+table tbody td {
+  padding: 8px 6px;
+  border-bottom: 1px solid rgba(255,255,255,0.02);
+}

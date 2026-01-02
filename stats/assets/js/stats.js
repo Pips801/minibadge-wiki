@@ -163,13 +163,21 @@
     const labels = top.map(t => t[0] || '(blank)');
     const counts = top.map(t => t[1]);
     const options = {
-      chart: { type: 'bar', height: 380, toolbar: { show: true }, background: 'transparent', foreColor: '#e6eef4' },
-      series: [{ name: 'Badges', data: counts }],
+      chart: {
+        type: 'bar',
+        height: Math.max(300, labels.length * 40),
+        background: 'transparent',
+        foreColor: '#e6eef4'
+      },
       plotOptions: { bar: { horizontal: true } },
-      xaxis: { labels: { formatter: v => parseInt(v,10) } },
-      theme: { mode: 'dark' },
       dataLabels: { enabled: false },
+      xaxis: { categories: labels },
+      series: [{ name: 'Badges', data: counts }],
+      yaxis: { labels: { show: true } },
+      theme: { mode: 'dark' },
+      tooltip: { theme: 'dark' },
     };
+
     const el = document.querySelector('#chartBadgesPerPerson');
     el.innerHTML = '';
     chartPeople = new ApexCharts(el, options);

@@ -10,12 +10,25 @@
     rel="stylesheet"
     href="https://cdn.jsdelivr.net/npm/bulma@1.0.0/css/bulma.min.css"
   />
+
+  <!-- shared site styles -->
+  <link rel="stylesheet" href="assets/css/site.css" />
 </head>
 <body>
-  <!-- Page header -->
+  <!-- unified header / nav (matches stats page) -->
+  <header class="site-header">
+    <div class="container">
+      <h1>MiniBadge Wiki</h1>
+      <nav class="nav">
+        <a href="/">Home</a>
+        <a href="/stats/">Stats</a>
+        <a href="https://docs.google.com/forms/d/e/1FAIpQLSeAOJycPVQHqQyn2cpl7OsgC0UCEfwmARElo-W8V1likq_fSA/viewform?usp=dialog" target="_blank" rel="noopener">Submit badge</a>
+      </nav>
+    </div>
+  </header>
+
   <section class="section">
     <div class="container">
-      <h1 class="title">Minibadge Wiki</h1>
       <p class="subtitle">
         Community-submitted SAINTCON minibadges.
         <!-- Replace this with your real submission link (Form / Issue Form, etc) -->
@@ -263,6 +276,11 @@
     </div>
   </section>
 
+  <footer class="site-footer">
+    <div class="container">
+      <small>MiniBadge — community list</small>
+    </div>
+  </footer>
   <!-- List.js -->
   <script src="https://cdn.jsdelivr.net/npm/list.js@2.3.1/dist/list.min.js"></script>
   <!-- Your custom logic -->
