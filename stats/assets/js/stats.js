@@ -104,7 +104,7 @@
   // Build list of candidate filenames to fetch
   const years = []; 
   for (let y = START_YEAR; y <= currentYear; y++) years.push(y);
-  const candidateFiles = years.map(y => `/${y}_form.json`);
+  const candidateFiles = years.map(y => `/${y}.json`);
 
   // DOM refs
   const generatedDateEl = document.getElementById('generatedDate');
@@ -403,7 +403,6 @@
 
   // Main run
   async function run() {
-    generatedDateEl.textContent = new Date().toLocaleString();
 
     const results = await fetchAll();
     if (!results || results.length === 0) {
