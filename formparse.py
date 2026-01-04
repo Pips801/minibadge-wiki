@@ -14,6 +14,7 @@ import time
 DEFAULT_INPUT_CSV_PATH = os.environ.get("MINIBADGE_CSV", "./form.csv")
 DEFAULT_OUTPUT_JSON    = os.environ.get("MINIBADGE_JSON", "./2026.json")
 IMAGES_DIR             = os.environ.get("MINIBADGE_IMAGES_DIR", "images/2026")
+MODEL_DIR                 = os.environ.get("MINIBADGE_3D_DIR", "3d-models")
 
 # Logical field -> Google Form header text
 CSV_MAP = {
@@ -32,6 +33,7 @@ CSV_MAP = {
     "profilePictureUrl":     "Your profile picture",
     "frontImageUrl":         "Front image",
     "backImageUrl":          "Back image",
+    "3d-model":              "GLB 3D render",
     "timestamp":             "Timestamp",  # Google Form timestamp
 }
 
@@ -186,6 +188,41 @@ def download_image_to_repo(image_url: str, base_name: str) -> str:
     return rel_path
 
 
+def download_glb_to_repo(glb_url: str, base_name: str) -> str:
+    """
+    Download a GLB file into MODEL_DIR as base_name.glb.
+    Returns relative path (e.g. '3d-models/foo.glb') on success,
+    or the original URL if download fails.
+    """
+    if not glb_url:
+        return ""
+
+    if not glb_url.startswith(("http://", "https://")):
+        # Already local
+        return glb_url
+
+    url = google_drive_to_direct(glb_url)
+
+    try:
+        resp = urlopen(url)
+        data = resp.read()
+    except (HTTPError, URLError) as e:
+        print(f"[WARN] Failed to download GLB {glb_url}: {e}")
+        return glb_url  # fall back to remote URL
+
+    os.makedirs(MODEL_DIR, exist_ok=True)
+
+    filename = f"{base_name}.glb"
+    file_path = os.path.join(MODEL_DIR, filename)
+
+    with open(file_path, "wb") as f:
+        f.write(data)
+
+    rel_path = f"{MODEL_DIR}/{filename}".replace("\\", "/")
+    print(f"[INFO] Saved GLB {glb_url} -> {rel_path}")
+    return rel_path
+
+
 def normalize_header(s: str) -> str:
     """lowercase, trim, collapse internal whitespace for matching."""
     return " ".join((s or "").strip().lower().split())
@@ -324,18 +361,21 @@ def main():
         raw_profile_url = _get(row, header_map["profilePictureUrl"])
         raw_front_url   = _get(row, header_map["frontImageUrl"])
         raw_back_url    = _get(row, header_map["backImageUrl"])
+        raw_glb_url     = _get(row, header_map["glb3DRenderUrl"])
 
         if existing:
-            # Reuse image URLs, update all other fields
+            # Reuse image URLs and GLB, update all other fields
             profile_url = existing.get("profilePictureUrl", "")
             front_url   = existing.get("frontImageUrl", "")
             back_url    = existing.get("backImageUrl", "")
+            glb_url     = existing.get("glb3DRenderUrl", "")
             reused_count += 1
         else:
-            # First time we've seen this badge-year: download images
+            # First time we've seen this badge-year: download images and GLB
             profile_url = download_image_to_repo(raw_profile_url, f"{slug}-profile") or raw_profile_url
             front_url   = download_image_to_repo(raw_front_url,  f"{slug}-front")   or raw_front_url
             back_url    = download_image_to_repo(raw_back_url,   f"{slug}-back")    or raw_back_url
+            glb_url     = download_glb_to_repo(raw_glb_url,      f"{slug}")          or raw_glb_url
             new_count += 1
 
         badge = {
@@ -344,6 +384,7 @@ def main():
             "profilePictureUrl":   profile_url,
             "frontImageUrl":       front_url,
             "backImageUrl":        back_url,
+            "glb3DRenderUrl":      glb_url,
             "description":         _get(row, header_map["description"]),
             "specialInstructions": _get(row, header_map["specialInstructions"]),
             "solderingInstructions": _get(row, header_map["solderingInstructions"]),
