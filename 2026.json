@@ -133,25 +133,6 @@
     "timestamp": "1/2/2026 14:22:24"
   },
   {
-    "title": "Charger Minibadge",
-    "author": "Pips",
-    "profilePictureUrl": "images/2026/charger-minibadge-profile.jpg",
-    "frontImageUrl": "images/2026/charger-minibadge-front.png",
-    "backImageUrl": "images/2026/charger-minibadge-back.png",
-    "3d-model": "",
-    "description": "Have you ever needed to charge your phone (or other stuff), but all you have lying around is a SAINTCON badge? You’re in luck! This minibadge will charge (up to 500mA) anything USB-C that you plug into it! Charge your phone! Charge your headphones! Charge a laptop! (not really) Charge another badge! The world is your charger!",
-    "specialInstructions": "",
-    "solderingInstructions": "Solder pin headers and start charging!",
-    "solderingDifficulty": "Pre-soldered",
-    "quantityMade": 35,
-    "category": "Personal",
-    "conferenceYear": "2026",
-    "boardHouse": "JLCPCB",
-    "howToAcquire": "Trade with me or buy one from my Tindie store!",
-    "rarity": "",
-    "timestamp": "1/2/2026 15:03:31"
-  },
-  {
     "title": "5x5 Stackable Minibadge Display",
     "author": "Pips",
     "profilePictureUrl": "images/2026/5x5-stackable-minibadge-display-profile.jpg",
