@@ -142,23 +142,5 @@
     "howToAcquire": "Trade with me or buy one from my Tindie store!",
     "rarity": "",
     "timestamp": "1/2/2026 15:03:31"
-  },
-  {
-    "title": "Stackable 5x5 Minibadge display",
-    "author": "Pips801",
-    "profilePictureUrl": "images/2026/stackable-5x5-minibadge-display-profile.jpg",
-    "frontImageUrl": "images/2026/stackable-5x5-minibadge-display-front.png",
-    "backImageUrl": "images/2026/stackable-5x5-minibadge-display-back.png",
-    "description": "A tileable 5x5 minibadge display, using magnetic pogo pins to connect and stack boards.",
-    "specialInstructions": "",
-    "solderingInstructions": "Solder pin sockets, pay attention to pogo pin orientation (pin vs pad) and solder magnetic pogo pins.",
-    "solderingDifficulty": "Beginner",
-    "quantityMade": 0,
-    "category": "Accessory",
-    "conferenceYear": "2026",
-    "boardHouse": "JLCPCB",
-    "howToAcquire": "Purchase it from my Tindie store! https://www.tindie.com/stores/pips/",
-    "rarity": "",
-    "timestamp": "1/4/2026 12:39:40"
   }
 ]
