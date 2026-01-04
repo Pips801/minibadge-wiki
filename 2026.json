@@ -114,6 +114,25 @@
     "timestamp": "11/20/2025 15:03:49"
   },
   {
+    "title": "IPEX to SMA adapter Minibadge",
+    "author": "Pips",
+    "profilePictureUrl": "images/2026/ipex-to-sma-adapter-minibadge-profile.jpg",
+    "frontImageUrl": "images/2026/ipex-to-sma-adapter-minibadge-front.png",
+    "backImageUrl": "images/2026/ipex-to-sma-adapter-minibadge-back.png",
+    "3d-model": "",
+    "description": "A minibadge (meant for use with my Meshtastic Minibadge) that converts I-PEX to SMA, so you can have a vertical SMA antenna.",
+    "specialInstructions": "",
+    "solderingInstructions": "Solder pin headers and plug in your IPEX to IPEX cable, and screw in your SMA antenna!",
+    "solderingDifficulty": "Pre-soldered",
+    "quantityMade": 20,
+    "category": "Personal",
+    "conferenceYear": "2026",
+    "boardHouse": "JLCPCB",
+    "howToAcquire": "Find me during the conference, or buy one from my Tindie store.",
+    "rarity": "",
+    "timestamp": "1/2/2026 14:22:24"
+  },
+  {
     "title": "Charger Minibadge",
     "author": "Pips",
     "profilePictureUrl": "images/2026/charger-minibadge-profile.jpg",
