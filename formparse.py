@@ -361,14 +361,14 @@ def main():
         raw_profile_url = _get(row, header_map["profilePictureUrl"])
         raw_front_url   = _get(row, header_map["frontImageUrl"])
         raw_back_url    = _get(row, header_map["backImageUrl"])
-        raw_glb_url     = _get(row, header_map["glb3DRenderUrl"])
+        raw_glb_url     = _get(row, header_map["3d-model"])
 
         if existing:
             # Reuse image URLs and GLB, update all other fields
             profile_url = existing.get("profilePictureUrl", "")
             front_url   = existing.get("frontImageUrl", "")
             back_url    = existing.get("backImageUrl", "")
-            glb_url     = existing.get("glb3DRenderUrl", "")
+            glb_url     = existing.get("3d-model", "")
             reused_count += 1
         else:
             # First time we've seen this badge-year: download images and GLB
@@ -384,7 +384,7 @@ def main():
             "profilePictureUrl":   profile_url,
             "frontImageUrl":       front_url,
             "backImageUrl":        back_url,
-            "glb3DRenderUrl":      glb_url,
+            "3d-model":            glb_url,
             "description":         _get(row, header_map["description"]),
             "specialInstructions": _get(row, header_map["specialInstructions"]),
             "solderingInstructions": _get(row, header_map["solderingInstructions"]),
