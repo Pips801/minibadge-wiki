@@ -169,5 +169,24 @@
     "howToAcquire": "Buy it from me!",
     "rarity": "",
     "timestamp": "1/4/2026 12:55:02"
+  },
+  {
+    "title": "Perfboard prototyping minibadge",
+    "author": "Pips",
+    "profilePictureUrl": "images/2026/perfboard-prototyping-minibadge-profile.jpg",
+    "frontImageUrl": "images/2026/perfboard-prototyping-minibadge-front.png",
+    "backImageUrl": "images/2026/perfboard-prototyping-minibadge-back.png",
+    "3d-model": "3d-models/perfboard-prototyping-minibadge.glb",
+    "description": "A perfboard minibadge for rapid prototyping at the conference! Design your own minibadge without the need for EDA software, just solder LEDs and let it rip!",
+    "specialInstructions": "",
+    "solderingInstructions": "",
+    "solderingDifficulty": "Pre-soldered",
+    "quantityMade": 200,
+    "category": "Personal",
+    "conferenceYear": "2026",
+    "boardHouse": "JLCPCB",
+    "howToAcquire": "Trade with me",
+    "rarity": "",
+    "timestamp": "1/4/2026 14:14:44"
   }
 ]
