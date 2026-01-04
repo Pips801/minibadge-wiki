@@ -176,6 +176,8 @@ document.addEventListener('DOMContentLoaded', () => {
       const howEl        = frag.querySelector('.item-howToAcquire');
       const timestampEl  = frag.querySelector('.item-timestamp');
       const rarityEl     = frag.querySelector('.item-rarity');
+      const model3dEl    = frag.querySelector('.item-3dModel');
+      const model3dBoxEl = frag.querySelector('.item-3dModelBox');
 
       const profileImgEl = frag.querySelector('.item-profilePictureUrl');
       const frontImgEl   = frag.querySelector('.item-frontImageUrl');
@@ -220,6 +222,12 @@ document.addEventListener('DOMContentLoaded', () => {
       if (timestampEl)  timestampEl.textContent  = item.timestamp || '';
       if (rarityEl)     rarityEl.textContent     = item.rarity || ''; 
 
+      // Handle 3D model (support both '3d-model' and '3dModel' field names)
+      const model3dUrl = item['3d-model'] || item['3dModel'] || '';
+      if (model3dEl && model3dUrl && model3dUrl.trim()) {
+        model3dEl.setAttribute('src', model3dUrl.trim());
+      }
+
       if (profileImgEl) {
         profileImgEl.src = profileUrl;
         profileImgEl.alt = (authorText || 'Badge author') + ' profile picture';
@@ -263,6 +271,11 @@ document.addEventListener('DOMContentLoaded', () => {
       hideBoxIfEmpty(specialEl);   // "Special instructions"
       hideBoxIfEmpty(solderingEl); // "Assembly & soldering instructions"
       hideBoxIfEmpty(howEl);       // "How do people get one?"
+      
+      // Hide 3D model box if no model URL is provided
+      if (model3dBoxEl && (!model3dUrl || !model3dUrl.trim())) {
+        model3dBoxEl.remove();
+      }
 
       listContainer.appendChild(frag);
     });
