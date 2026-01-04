@@ -128,3 +128,17 @@ table tbody td {
   padding: 8px 6px;
   border-bottom: 1px solid rgba(255,255,255,0.02);
 }
+
+table.table {
+    background-color: #0b1720 !important; /* e.g., #2196F3 for a medium blue */
+    color: white; /* or a contrasting color */
+}
+
+table.table tr:nth-child(odd) { /* For non-striped rows if any, or general row color */
+    background-color: #07121a !important; /* e.g., #BBDEFB for a lighter blue */
+}
+
+table.table tr:nth-child(even) { /* For striped rows */
+    background-color:#0b1720 !important; /* e.g., #1976D2 for a darker blue */
+    color: white; /* Ensure text is readable */
+}
