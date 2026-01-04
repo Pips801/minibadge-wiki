@@ -92,8 +92,6 @@ textarea {
   border: 1px solid rgba(230,238,244,0.06);
 }
 .button {
-  background: rgba(230,238,244,0.06);
-  color: #e6eef4;
   border: 1px solid rgba(230,238,244,0.04);
 }
 .button.is-light {
@@ -102,17 +100,6 @@ textarea {
 }
 
 /* Tags */
-.tag {
-  background: rgba(230,238,244,0.06);
-  color: #e6eef4;
-  border-radius: 4px;
-  padding: 0.25em 0.5em;
-  margin-right: 6px;
-}
-.tag.is-info {
-  background: rgba(16,185,129,0.12);
-  color: #a7f3d0;
-}
 
 /* Headings and subtitles */
 h1, h2, h3, h4, .title, .subtitle {

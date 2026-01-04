@@ -90,16 +90,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (d === 'pre-soldered') {
       tagEl.classList.add('is-info');
-    } else if (d === 'beginner') {
+    } else if (d === 'beginner' || d === 'simple') {
       tagEl.classList.add('is-success');
     } else if (d === 'intermediate') {
       tagEl.classList.add('is-success');
     } else if (d === 'advanced') {
       tagEl.classList.add('is-warning');
-    } else if (d === 'stupid') {
+    } else if (d === 'stupid' || d === 'stupid hard' || d === 'torture') {
       tagEl.classList.add('is-danger');
     } else {
-      tagEl.classList.add('is-light');
     }
   }
 
