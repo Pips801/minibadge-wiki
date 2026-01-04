@@ -4,7 +4,7 @@
 
 https://minibadge.wiki/ 
 
-A filterable/searchable archive of every minibadge I could get my hands on. Data sources come from 2023, 2024, and 2025 build guides, as well as a new minibadge submission forum.
+A filterable/searchable archive of every minibadge I could get my hands on. Data sources come from 2021, 2022, 2023, 2024, and 2025 build guides, as well as a new minibadge submission forum.
 
 ## New submission process
 1. User submits Minibadge to Google Form, which has CSV export
