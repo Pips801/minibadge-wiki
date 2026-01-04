@@ -113,7 +113,6 @@
     "profilePictureUrl": "images/2026/ipex-to-sma-adapter-minibadge-profile.jpg",
     "frontImageUrl": "images/2026/ipex-to-sma-adapter-minibadge-front.png",
     "backImageUrl": "images/2026/ipex-to-sma-adapter-minibadge-back.png",
-    "3d-model": "3d-models/ipex-to-sma-minibadge.glb",
     "description": "A minibadge (meant for use with my Meshtastic Minibadge) that converts I-PEX to SMA, so you can have a vertical SMA antenna.",
     "specialInstructions": "",
     "solderingInstructions": "Solder pin headers and plug in your IPEX to IPEX cable, and screw in your SMA antenna!",
@@ -132,7 +131,6 @@
     "profilePictureUrl": "images/2026/charger-minibadge-profile.jpg",
     "frontImageUrl": "images/2026/charger-minibadge-front.png",
     "backImageUrl": "images/2026/charger-minibadge-back.png",
-    "3d-model": "3d-models/charger-minibadge.glb",
     "description": "Have you ever needed to charge your phone (or other stuff), but all you have lying around is a SAINTCON badge? You’re in luck! This minibadge will charge (up to 500mA) anything USB-C that you plug into it! Charge your phone! Charge your headphones! Charge a laptop! (not really) Charge another badge! The world is your charger!",
     "specialInstructions": "",
     "solderingInstructions": "Solder pin headers and start charging!",
@@ -144,5 +142,23 @@
     "howToAcquire": "Trade with me or buy one from my Tindie store!",
     "rarity": "",
     "timestamp": "1/2/2026 15:03:31"
+  },
+  {
+    "title": "Stackable 5x5 Minibadge display",
+    "author": "Pips801",
+    "profilePictureUrl": "images/2026/stackable-5x5-minibadge-display-profile.jpg",
+    "frontImageUrl": "images/2026/stackable-5x5-minibadge-display-front.png",
+    "backImageUrl": "images/2026/stackable-5x5-minibadge-display-back.png",
+    "description": "A tileable 5x5 minibadge display, using magnetic pogo pins to connect and stack boards.",
+    "specialInstructions": "",
+    "solderingInstructions": "Solder pin sockets, pay attention to pogo pin orientation (pin vs pad) and solder magnetic pogo pins.",
+    "solderingDifficulty": "Beginner",
+    "quantityMade": 0,
+    "category": "Accessory",
+    "conferenceYear": "2026",
+    "boardHouse": "JLCPCB",
+    "howToAcquire": "Purchase it from my Tindie store! https://www.tindie.com/stores/pips/",
+    "rarity": "",
+    "timestamp": "1/4/2026 12:39:40"
   }
 ]
