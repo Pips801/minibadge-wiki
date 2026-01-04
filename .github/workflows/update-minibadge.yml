@@ -65,11 +65,12 @@ jobs:
           git status
           git diff || true
 
-          # Only commit if there are changes
-          if ! git diff --quiet; then
-            git add 2026.json images/ 3d-models/ || true
-            git add 3d-models/* || true
-            git commit -m "Update minibadges JSON and images [skip ci]" || true
+          # Add all changes (tracked, modified, and untracked)
+          git add -A
+
+          # Only commit if there are staged changes
+          if ! git diff --cached --quiet; then
+            git commit -m "Update minibadges JSON and images [skip ci]"
             git push
           else
             echo "No changes to commit."
