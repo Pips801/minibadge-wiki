@@ -118,6 +118,39 @@ document.addEventListener('DOMContentLoaded', () => {
     return decoded.replace(/\\n/g, '\n');
   }
 
+  // Escape HTML special characters
+  function escapeHtml(text) {
+    const map = {
+      '&': '&amp;',
+      '<': '&lt;',
+      '>': '&gt;',
+      '"': '&quot;',
+      "'": '&#039;'
+    };
+    return text.replace(/[&<>"']/g, m => map[m]);
+  }
+
+  // Convert URLs in text to clickable links
+  function convertLinksToClickable(text) {
+    if (!text) return '';
+    
+    // Match http/https URLs and www URLs, excluding closing parentheses
+    const urlRegex = /(https?:\/\/[^\s<>)]+|www\.[^\s<>)]+)/g;
+    const parts = text.split(urlRegex);
+    
+    return parts.map((part, i) => {
+      // Even indices are non-URL text, odd indices are URLs
+      if (i % 2 === 0) {
+        // Non-URL text: escape HTML
+        return escapeHtml(part);
+      } else {
+        // URL text: create a link
+        const url = part.startsWith('http') ? part : 'https://' + part;
+        return `<a href="${escapeHtml(url)}" target="_blank" rel="noopener noreferrer">${escapeHtml(part)}</a>`;
+      }
+    }).join('');
+  }
+
   // ---------- Render cards into DOM from JSON -----------------------------
 
   function renderCards(data) {
@@ -165,19 +198,23 @@ document.addEventListener('DOMContentLoaded', () => {
       if (qtyDisplayEl) qtyDisplayEl.textContent = item.quantityMade || '';
       if (boardHouseEl) boardHouseEl.textContent = item.boardHouse || '';
       if (descEl) {
-        descEl.textContent = normalizeTextField(item.description);
+        const normalized = normalizeTextField(item.description);
+        descEl.innerHTML = convertLinksToClickable(normalized);
         descEl.style.whiteSpace = 'pre-wrap';
       }
       if (specialEl) {
-        specialEl.textContent = normalizeTextField(item.specialInstructions);
+        const normalized = normalizeTextField(item.specialInstructions);
+        specialEl.innerHTML = convertLinksToClickable(normalized);
         specialEl.style.whiteSpace = 'pre-wrap';
       }
       if (solderingEl) {
-        solderingEl.textContent = normalizeTextField(item.solderingInstructions);
+        const normalized = normalizeTextField(item.solderingInstructions);
+        solderingEl.innerHTML = convertLinksToClickable(normalized);
         solderingEl.style.whiteSpace = 'pre-wrap';
       }
       if (howEl) {
-        howEl.textContent = normalizeTextField(item.howToAcquire);
+        const normalized = normalizeTextField(item.howToAcquire);
+        howEl.innerHTML = convertLinksToClickable(normalized);
         howEl.style.whiteSpace = 'pre-wrap';
       }
       if (timestampEl)  timestampEl.textContent  = item.timestamp || '';
