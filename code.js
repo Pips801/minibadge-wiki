@@ -103,6 +103,22 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
+  // Decode HTML entities like '&amp;' in JSON fields so they display correctly.
+  function decodeHtmlEntities(str) {
+    if (!str) return '';
+    const el = document.createElement('div');
+    el.innerHTML = str;
+    return el.textContent || el.innerText || '';
+  }
+
+  // Normalize text fields: decode HTML entities and convert literal '\\n' sequences
+  // to actual newlines so they render properly when we set `style.whiteSpace = 'pre-wrap'`.
+  function normalizeTextField(s) {
+    const decoded = decodeHtmlEntities(s || '');
+    // Replace literal backslash+n sequences with actual newline characters
+    return decoded.replace(/\\n/g, '\n');
+  }
+
   // ---------- Render cards into DOM from JSON -----------------------------
 
   function renderCards(data) {
@@ -138,24 +154,39 @@ document.addEventListener('DOMContentLoaded', () => {
       const backUrl    = item.backImageUrl      || './default-front.jpg';
       const difficulty = item.solderingDifficulty || '';
 
+      // Decode potential HTML entities (e.g. '&amp;') in author so dropdown shows '&'
+      const authorText = decodeHtmlEntities(item.author || '');
+
       if (titleEl)      titleEl.textContent      = item.title || '';
-      if (authorEl)     authorEl.textContent     = item.author || '';
+      if (authorEl)     authorEl.textContent     = authorText;
       if (categoryEl)   categoryEl.textContent   = item.category || '';
       if (yearEl)       yearEl.textContent       = item.conferenceYear || '';
       if (diffEl)       diffEl.textContent       = difficulty;
       if (qtyHiddenEl)  qtyHiddenEl.textContent  = item.quantityMade || '';
       if (qtyDisplayEl) qtyDisplayEl.textContent = item.quantityMade || '';
       if (boardHouseEl) boardHouseEl.textContent = item.boardHouse || '';
-      if (descEl)       descEl.textContent       = item.description || '';
-      if (specialEl)    specialEl.textContent    = item.specialInstructions || '';
-      if (solderingEl)  solderingEl.textContent  = item.solderingInstructions || '';
-      if (howEl)        howEl.textContent        = item.howToAcquire || '';
+      if (descEl) {
+        descEl.textContent = normalizeTextField(item.description);
+        descEl.style.whiteSpace = 'pre-wrap';
+      }
+      if (specialEl) {
+        specialEl.textContent = normalizeTextField(item.specialInstructions);
+        specialEl.style.whiteSpace = 'pre-wrap';
+      }
+      if (solderingEl) {
+        solderingEl.textContent = normalizeTextField(item.solderingInstructions);
+        solderingEl.style.whiteSpace = 'pre-wrap';
+      }
+      if (howEl) {
+        howEl.textContent = normalizeTextField(item.howToAcquire);
+        howEl.style.whiteSpace = 'pre-wrap';
+      }
       if (timestampEl)  timestampEl.textContent  = item.timestamp || '';
-      if (rarityEl)     rarityEl.textContent     = item.rarity || '';
+      if (rarityEl)     rarityEl.textContent     = item.rarity || ''; 
 
       if (profileImgEl) {
         profileImgEl.src = profileUrl;
-        profileImgEl.alt = (item.author || 'Badge author') + ' profile picture';
+        profileImgEl.alt = (authorText || 'Badge author') + ' profile picture';
       }
       if (frontImgEl) {
         frontImgEl.src = frontUrl;
@@ -222,15 +253,16 @@ document.addEventListener('DOMContentLoaded', () => {
   function itemMatchesFacets(values) {
     const { category, year, difficulty, author } = getCurrentFacetValues();
 
-    const catVal  = (values['item-category'] || '').trim();
-    const yearVal = (values['item-conferenceYear'] || '').trim();
-    const diffVal = (values['item-solderingDifficulty'] || '').trim();
-    const authVal = (values['item-author'] || '').trim();
+    // Decode stored item values (they may contain HTML entities) before comparing
+    const catValStored  = decodeHtmlEntities((values['item-category'] || '')).trim();
+    const yearValStored = decodeHtmlEntities((values['item-conferenceYear'] || '')).trim();
+    const diffValStored = decodeHtmlEntities((values['item-solderingDifficulty'] || '')).trim();
+    const authValStored = decodeHtmlEntities((values['item-author'] || '')).trim();
 
-    if (category   && catVal  !== category)   return false;
-    if (year       && yearVal !== year)       return false;
-    if (difficulty && diffVal !== difficulty) return false;
-    if (author     && authVal !== author)     return false;
+    if (category   && catValStored  !== category)   return false;
+    if (year       && yearValStored !== year)       return false;
+    if (difficulty && diffValStored !== difficulty) return false;
+    if (author     && authValStored !== author)     return false;
 
     return true;
   }
@@ -292,10 +324,12 @@ document.addEventListener('DOMContentLoaded', () => {
     itemList.items.forEach(item => {
       const v = item.values();
 
-      if (v['item-category'])            valueSets['item-category'].add(v['item-category']);
-      if (v['item-conferenceYear'])      valueSets['item-conferenceYear'].add(v['item-conferenceYear']);
-      if (v['item-solderingDifficulty']) valueSets['item-solderingDifficulty'].add(v['item-solderingDifficulty']);
-      if (v['item-author'])              valueSets['item-author'].add(v['item-author']);
+      // Some stored values may include HTML entities (e.g. '&amp;'). Decode them
+      // so the facet lists show human-readable text.
+      if (v['item-category'])            valueSets['item-category'].add(decodeHtmlEntities(v['item-category']));
+      if (v['item-conferenceYear'])      valueSets['item-conferenceYear'].add(decodeHtmlEntities(v['item-conferenceYear']));
+      if (v['item-solderingDifficulty']) valueSets['item-solderingDifficulty'].add(decodeHtmlEntities(v['item-solderingDifficulty']));
+      if (v['item-author'])              valueSets['item-author'].add(decodeHtmlEntities(v['item-author']));
     });
 
     FACETS.forEach(({ field, select, label }) => {

@@ -3,6 +3,7 @@ import argparse
 import json
 import re
 import shutil
+import html
 from collections import Counter, defaultdict
 from pathlib import Path
 from typing import Dict, List, Tuple, Optional
@@ -13,8 +14,9 @@ from typing import Dict, List, Tuple, Optional
 
 # Separators we will treat as "multiple authors"
 # (We normalize all to the chosen join token)
+# Include HTML-encoded '&amp;' as a separator to handle inputs pasted from HTML.
 SPLIT_RE = re.compile(r"""
-    \s*(?:,|/|\||\+|;|\band\b|\&|\u0026)\s*
+    \s*(?:,|/|\||\+|;|\band\b|\&|\u0026|&amp;)\s*
 """, re.IGNORECASE | re.VERBOSE)
 
 # Some strings should remain intact (not split), even if they contain '&' etc.
@@ -67,6 +69,9 @@ def split_authors(author_field: str) -> Tuple[List[str], List[str]]:
     """
     warnings = []
     raw = collapse_spaces(author_field)
+
+    # Normalize common HTML-encoded entities (e.g. &amp;) so separators are detected.
+    raw = html.unescape(raw)
 
     if not raw:
         return [], warnings
@@ -317,6 +322,23 @@ def main() -> int:
     # Write with backups
     write_files_with_backup(updated_data)
     print("\nDone. Wrote updated JSON and created .bak backups for each file.")
+
+    # Ask whether to delete the .bak backup files
+    resp2 = input("\nDelete .bak backup files? (y/N): ").strip().lower()
+    if resp2 in ("y", "yes"):
+        deleted = 0
+        for p in paths:
+            bak = p.with_suffix(p.suffix + ".bak")
+            try:
+                if bak.exists():
+                    bak.unlink()
+                    deleted += 1
+            except Exception as e:
+                print(f"[WARN] Failed to delete backup {bak}: {e}")
+        print(f"Deleted {deleted} backup file{'' if deleted == 1 else 's'}.")
+    else:
+        print("Keeping .bak backup files.")
+
     return 0
 
 
