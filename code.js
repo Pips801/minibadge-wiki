@@ -42,10 +42,15 @@ document.addEventListener('DOMContentLoaded', () => {
         viewer.setAttribute('poster', 'loading.png')
         viewer.setAttribute('camera-controls', '');
         viewer.setAttribute('disable-zoom', '');
-        viewer.setAttribute('camera-orbit', '45deg 45deg 180mm');
-        viewer.setAttribute('min-camera-orbit', 'auto 1deg auto');
-        viewer.setAttribute('max-camera-orbit', 'auto 179deg auto');
+        viewer.setAttribute('camera-orbit', '45deg 45deg auto');
+        viewer.setAttribute('min-camera-orbit', 'auto 1deg 80mm');
+        viewer.setAttribute('max-camera-orbit', 'auto 179deg 500mm');
+        viewer.setAttribute('interaction-prompt', 'none');
         viewer.setAttribute('camera-target', '0m 0m 0m');
+        viewer.setAttribute('shadow-intensity', '2');
+        viewer.setAttribute('shadow-softness', '1');
+        viewer.setAttribute('tone-mapping', 'agx');
+        viewer.setAttribute('field-of-view', 'auto');
         viewer.setAttribute('alt', '3D model of the badge');
         viewer.style.width = '100%';
         viewer.style.height = '100%';
