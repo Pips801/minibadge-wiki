@@ -71,6 +71,23 @@ body {
   border: 1px solid rgba(230,238,244,0.03);
 }
 
+/* Force text wrapping for all content in cards, even long URLs without spaces */
+.card-content,
+.content,
+.item-description,
+.item-specialInstructions,
+.item-solderingInstructions,
+.item-howToAcquire,
+.minibadge-card p,
+.minibadge-card div {
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  word-break: break-word;
+  hyphens: auto;
+  max-width: 100%;
+  overflow: hidden;
+}
+
 /* Ensure there's a single solid dark background across pages (override any per-page gradient) */
 html, body {
   background-color: var(--blue-dark) !important;
