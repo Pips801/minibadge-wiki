@@ -188,5 +188,24 @@
     "howToAcquire": "Trade with me",
     "rarity": "",
     "timestamp": "1/4/2026 14:14:44"
+  },
+  {
+    "title": "Minibadge Display Devboard",
+    "author": "Pips",
+    "profilePictureUrl": "images/2026/minibadge-display-devboard-profile.jpg",
+    "frontImageUrl": "images/2026/minibadge-display-devboard-front.png",
+    "backImageUrl": "images/2026/minibadge-display-devboard-back.png",
+    "3d-model": "3d-models/minibadge-display-devboard.glb",
+    "description": "This board provides everything your custom Minibadge display will need, including LiPo battery charging/use and USB-C power. It can be attached board-to-board with your own PCB designs, or it can be wired up using push-in WAGO wire terminals to your existing displays.",
+    "specialInstructions": "- Input (USB-C): 5V@3A\n- Input (Battery): 4.2V@3A\n- Battery charging: 4.2V@800mA\n- Output (3.3V): 3.3V@3A\n- Output (CLK): 3.3V@3A\n- Output (SYS): Input voltage@amperage (whichever is higher)\n- Max total minibadges: 30-50",
+    "solderingInstructions": "",
+    "solderingDifficulty": "Pre-soldered",
+    "quantityMade": 50,
+    "category": "Accessory",
+    "conferenceYear": "2026",
+    "boardHouse": "JLCPCB",
+    "howToAcquire": "Purchase from my Tindie store - https://www.tindie.com/stores/pips/",
+    "rarity": "",
+    "timestamp": "1/4/2026 18:18:31"
   }
 ]
