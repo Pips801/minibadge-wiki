@@ -28,6 +28,36 @@ document.addEventListener('DOMContentLoaded', () => {
     'item-rarity'
   ];
 
+  // Intersection Observer for lazy-loading 3D models
+  const modelObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      const container = entry.target;
+      const boxEl = container.closest('.item-3dModelBox');
+      const glbUrl = boxEl ? boxEl.dataset.glbUrl : '';
+
+      if (entry.isIntersecting && !container.querySelector('model-viewer') && glbUrl) {
+        // Create and load model-viewer
+        const viewer = document.createElement('model-viewer');
+        viewer.setAttribute('src', glbUrl);
+        viewer.setAttribute('poster', 'loading.png')
+        viewer.setAttribute('camera-controls', '');
+        viewer.setAttribute('disable-zoom', '');
+        viewer.setAttribute('camera-orbit', '45deg 45deg 180mm');
+        viewer.setAttribute('min-camera-orbit', 'auto 1deg auto');
+        viewer.setAttribute('max-camera-orbit', 'auto 179deg auto');
+        viewer.setAttribute('camera-target', '0m 0m 0m');
+        viewer.setAttribute('alt', '3D model of the badge');
+        viewer.style.width = '100%';
+        viewer.style.height = '100%';
+        container.appendChild(viewer);
+      } else if (!entry.isIntersecting && container.querySelector('model-viewer')) {
+        // Unload model-viewer when out of view
+        const viewer = container.querySelector('model-viewer');
+        viewer.remove();
+      }
+    });
+  }, { rootMargin: '100px' }); // Start loading 100px before entering view
+
   // Facet metadata so we can treat them generically
   const FACETS = [
     { name: 'category',   field: 'item-category',          select: categoryFilter,   label: 'All categories'  },
@@ -223,9 +253,19 @@ document.addEventListener('DOMContentLoaded', () => {
       if (rarityEl)     rarityEl.textContent     = item.rarity || ''; 
 
       // Handle 3D model (support both '3d-model' and '3dModel' field names)
-      const model3dUrl = item['3d-model'] || item['3dModel'] || '';
-      if (model3dEl && model3dUrl && model3dUrl.trim()) {
-        model3dEl.setAttribute('src', model3dUrl.trim());
+      const model3dUrl = item['3d-model'] || item['3dModel'] || item['glb3dModel'] || '';
+      if (model3dBoxEl) {
+        if (model3dUrl && model3dUrl.trim()) {
+          model3dBoxEl.dataset.glbUrl = model3dUrl.trim();
+          const containerEl = frag.querySelector('.item-3dModelContainer');
+          if (containerEl) {
+            // Register the container for lazy-loading
+            modelObserver.observe(containerEl);
+          }
+        } else {
+          // Hide the 3D model box if there's no URL
+          model3dBoxEl.style.display = 'none';
+        }
       }
 
       if (profileImgEl) {
