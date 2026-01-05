@@ -151,3 +151,37 @@ table.table tr:nth-child(even) { /* For striped rows */
   background-color: var(--blue-dark) !important; /* e.g., #1976D2 for a darker blue */
   color: white; /* Ensure text is readable */
 }
+
+/* GitHub-style clickable title link */
+.minibadge-title-link {
+  display: inline-block;
+  position: relative;
+  text-decoration: underline;
+  text-decoration-color: rgba(200, 200, 200, 0.2);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+  transition: text-decoration-color 0.2s ease, text-decoration-thickness 0.2s ease;
+  padding-right: 1.4em;
+}
+
+.minibadge-title-link::after {
+  content: '🔗';
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  font-size: 0.9em;
+  pointer-events: none;
+  margin-left: 0.3em;
+}
+
+.minibadge-title-link:hover {
+  text-decoration-color: rgba(200, 200, 200, 0.5);
+  text-decoration-thickness: 2px;
+}
+
+.minibadge-title-link:hover::after {
+  opacity: 1;
+}

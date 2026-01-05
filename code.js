@@ -86,6 +86,37 @@ document.addEventListener('DOMContentLoaded', () => {
   let allData  = [];
   let currentSearchQuery = '';
 
+  // Parse URL parameters and prefill filters if present
+  function initializeFiltersFromUrl() {
+    const urlParams = new URLSearchParams(window.location.search);
+    
+    const searchParam = urlParams.get('search');
+    if (searchParam && searchInput) {
+      searchInput.value = searchParam;
+      currentSearchQuery = searchParam;
+    }
+    
+    const yearParam = urlParams.get('year');
+    if (yearParam && yearFilter) {
+      yearFilter.value = yearParam;
+    }
+    
+    const categoryParam = urlParams.get('category');
+    if (categoryParam && categoryFilter) {
+      categoryFilter.value = categoryParam;
+    }
+    
+    const difficultyParam = urlParams.get('difficulty');
+    if (difficultyParam && difficultyFilter) {
+      difficultyFilter.value = difficultyParam;
+    }
+    
+    const authorParam = urlParams.get('author');
+    if (authorParam && authorFilter) {
+      authorFilter.value = authorParam;
+    }
+  }
+
   // ---------- Fetch helpers ----------------------------------------------
 
   function fetchAllData(files) {
@@ -226,8 +257,61 @@ document.addEventListener('DOMContentLoaded', () => {
       // Decode potential HTML entities (e.g. '&amp;') in author so dropdown shows '&'
       const authorText = decodeHtmlEntities(item.author || '');
 
-      if (titleEl)      titleEl.textContent      = item.title || '';
-      if (authorEl)     authorEl.textContent     = authorText;
+      if (titleEl) {
+        titleEl.textContent = item.title || '';
+        // Make title clickable with GitHub-style link icon on hover
+        titleEl.classList.add('minibadge-title-link');
+        titleEl.style.cursor = 'pointer';
+        titleEl.style.userSelect = 'none';
+        titleEl.title = 'Click to copy search link for this badge';
+        
+        titleEl.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const badgeTitle = item.title || '';
+          const searchUrl = `${window.location.origin}${window.location.pathname}?search=${encodeURIComponent(badgeTitle)}`;
+          navigator.clipboard.writeText(searchUrl).then(() => {
+            // Show brief feedback by temporarily changing text
+            const originalText = titleEl.textContent;
+            titleEl.textContent = '✓ Copied!';
+            setTimeout(() => {
+              titleEl.textContent = originalText;
+            }, 1500);
+          }).catch(err => {
+            console.error('Failed to copy to clipboard:', err);
+          });
+        });
+      }
+      if (authorEl) {
+        authorEl.textContent = authorText;
+        // Make author clickable to filter by author
+        authorEl.classList.add('minibadge-title-link');
+        authorEl.style.cursor = 'pointer';
+        authorEl.style.userSelect = 'none';
+        authorEl.title = 'Click to filter by this author';
+        
+        authorEl.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const authorName = authorText;
+          // Clear all filters first, then set only author
+          window.history.replaceState(null, '', `?author=${encodeURIComponent(authorName)}`);
+          
+          // Clear all filter dropdowns
+          FACETS.forEach(({ select }) => {
+            if (select) select.value = '';
+          });
+          if (searchInput) {
+            searchInput.value = '';
+            currentSearchQuery = '';
+          }
+          
+          // Set only the author filter
+          if (authorFilter) {
+            authorFilter.value = authorName;
+          }
+          
+          applyFiltersAndSearch(itemList);
+        });
+      }
       if (categoryEl)   categoryEl.textContent   = item.category || '';
       if (yearEl)       yearEl.textContent       = item.conferenceYear || '';
       if (diffEl)       diffEl.textContent       = difficulty;
@@ -303,6 +387,46 @@ document.addEventListener('DOMContentLoaded', () => {
       hideTagIfEmpty(qtyDisplayEl);
       hideTagIfEmpty(boardHouseEl);
       hideTagIfEmpty(rarityEl);
+
+      // Make tags clickable for filtering
+      const makeTagClickable = (innerEl, paramName) => {
+        if (!innerEl) return;
+        const tag = innerEl.closest('.tag');
+        if (!tag || !innerEl.textContent.trim()) return;
+        
+        tag.style.cursor = 'pointer';
+        tag.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const value = innerEl.textContent.trim();
+          // Clear all filters first, then set only this one
+          window.history.replaceState(null, '', `?${paramName}=${encodeURIComponent(value)}`);
+          
+          // Clear all filter dropdowns
+          FACETS.forEach(({ select }) => {
+            if (select) select.value = '';
+          });
+          if (searchInput) {
+            searchInput.value = '';
+            currentSearchQuery = '';
+          }
+          
+          // Set only the clicked filter dropdown
+          if (paramName === 'year' && yearFilter) {
+            yearFilter.value = value;
+          } else if (paramName === 'category' && categoryFilter) {
+            categoryFilter.value = value;
+          } else if (paramName === 'difficulty' && difficultyFilter) {
+            difficultyFilter.value = value;
+          }
+          
+          applyFiltersAndSearch(itemList);
+        });
+      };
+
+      makeTagClickable(yearEl, 'year');
+      makeTagClickable(categoryEl, 'category');
+      makeTagClickable(diffEl, 'difficulty');
+      makeTagClickable(boardHouseEl, 'supplier');
 
       // Remove the details boxes if their content is empty
       const hideBoxIfEmpty = (contentEl) => {
@@ -415,15 +539,52 @@ document.addEventListener('DOMContentLoaded', () => {
       'item-author':              new Set()
     };
 
-    itemList.items.forEach(item => {
-      const v = item.values();
+    // For each field, build options based on items matching OTHER filters (not this field)
+    const fieldConfigs = [
+      { field: 'item-category', name: 'category' },
+      { field: 'item-conferenceYear', name: 'year' },
+      { field: 'item-solderingDifficulty', name: 'difficulty' },
+      { field: 'item-author', name: 'author' }
+    ];
 
-      // Some stored values may include HTML entities (e.g. '&amp;'). Decode them
-      // so the facet lists show human-readable text.
-      if (v['item-category'])            valueSets['item-category'].add(decodeHtmlEntities(v['item-category']));
-      if (v['item-conferenceYear'])      valueSets['item-conferenceYear'].add(decodeHtmlEntities(v['item-conferenceYear']));
-      if (v['item-solderingDifficulty']) valueSets['item-solderingDifficulty'].add(decodeHtmlEntities(v['item-solderingDifficulty']));
-      if (v['item-author'])              valueSets['item-author'].add(decodeHtmlEntities(v['item-author']));
+    fieldConfigs.forEach(({ field, name }) => {
+      // Get current filter values
+      const { category, year, difficulty, author } = getCurrentFacetValues();
+      const currentFilters = { category, year, difficulty, author };
+      
+      // Remove this field from filters to get "other active filters"
+      const otherFilters = { ...currentFilters };
+      delete otherFilters[name];
+
+      // Filter items by other active filters (excluding this field)
+      itemList.items.forEach(item => {
+        const v = item.values();
+        
+        // Check if item matches all OTHER active filters
+        let matchesOtherFilters = true;
+        
+        if (otherFilters.category) {
+          const catVal = decodeHtmlEntities((v['item-category'] || '')).trim();
+          if (catVal !== otherFilters.category) matchesOtherFilters = false;
+        }
+        if (otherFilters.year) {
+          const yearVal = decodeHtmlEntities((v['item-conferenceYear'] || '')).trim();
+          if (yearVal !== otherFilters.year) matchesOtherFilters = false;
+        }
+        if (otherFilters.difficulty) {
+          const diffVal = decodeHtmlEntities((v['item-solderingDifficulty'] || '')).trim();
+          if (diffVal !== otherFilters.difficulty) matchesOtherFilters = false;
+        }
+        if (otherFilters.author) {
+          const authVal = decodeHtmlEntities((v['item-author'] || '')).trim();
+          if (authVal !== otherFilters.author) matchesOtherFilters = false;
+        }
+
+        // If matches other filters, add this field's value to the set
+        if (matchesOtherFilters && v[field]) {
+          valueSets[field].add(decodeHtmlEntities(v[field]));
+        }
+      });
     });
 
     FACETS.forEach(({ field, select, label }) => {
@@ -451,12 +612,28 @@ document.addEventListener('DOMContentLoaded', () => {
     if (emptyMessage) {
       emptyMessage.style.display = visibleCount === 0 ? '' : 'none';
     }
+
+    // Update filter dropdowns to only show options from visible items
+    buildFacetOptions(itemList);
   }
 
   function initFilters(itemList, totalCount) {
-    FACETS.forEach(({ select }) => {
+    FACETS.forEach(({ name, select }) => {
       if (!select) return;
       select.addEventListener('change', () => {
+        // Update URL when filter changes
+        const { category, year, difficulty, author } = getCurrentFacetValues();
+        const params = new URLSearchParams();
+        
+        if (year) params.set('year', year);
+        if (category) params.set('category', category);
+        if (difficulty) params.set('difficulty', difficulty);
+        if (author) params.set('author', author);
+        
+        const queryString = params.toString();
+        const newUrl = queryString ? `${window.location.pathname}?${queryString}` : window.location.pathname;
+        window.history.replaceState(null, '', newUrl);
+        
         applyFiltersAndSearch(itemList);
       });
     });
@@ -477,6 +654,8 @@ document.addEventListener('DOMContentLoaded', () => {
           searchInput.value = '';
           currentSearchQuery = '';
         }
+        // Clear URL parameters
+        window.history.replaceState(null, '', window.location.pathname);
         applyFiltersAndSearch(itemList);
       });
     }
@@ -594,6 +773,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       buildFacetOptions(itemList);
       initSorting(itemList);          // default: newest first by timestamp
+      initializeFiltersFromUrl();     // apply URL parameters if present
       initFilters(itemList, totalCount);
       applyFiltersAndSearch(itemList); // apply current filters/search
     })
