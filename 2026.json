@@ -207,5 +207,24 @@
     "howToAcquire": "Purchase from my Tindie store - https://www.tindie.com/stores/pips/",
     "rarity": "",
     "timestamp": "1/4/2026 18:18:31"
+  },
+  {
+    "title": "Minibadge.wiki",
+    "author": "Pips",
+    "profilePictureUrl": "images/2026/minibadge-wiki-profile.jpg",
+    "frontImageUrl": "images/2026/minibadge-wiki-front.png",
+    "backImageUrl": "images/2026/minibadge-wiki-back.png",
+    "3d-model": "3d-models/minibadge-wiki.glb",
+    "description": "Check out https://minibadge.wiki ! The largest collection of Minibadge information, including pictures, descriptions, statistics, and full searchability.",
+    "specialInstructions": "",
+    "solderingInstructions": "Solder LED and resistor. Solder pin headers. Visit https://minibadge.wiki",
+    "solderingDifficulty": "Beginner",
+    "quantityMade": 0,
+    "category": "Personal",
+    "conferenceYear": "2026",
+    "boardHouse": "JLCPCB",
+    "howToAcquire": "Come find me! I will be giving these out",
+    "rarity": "",
+    "timestamp": "1/4/2026 19:57:47"
   }
 ]
