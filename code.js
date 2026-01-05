@@ -49,7 +49,7 @@ document.addEventListener('DOMContentLoaded', () => {
         viewer.setAttribute('camera-target', '0m 0m 0m');
         viewer.setAttribute('shadow-intensity', '2');
         viewer.setAttribute('shadow-softness', '1');
-        viewer.setAttribute('tone-mapping', 'agx');
+        viewer.setAttribute('tone-mapping', 'auto');
         viewer.setAttribute('field-of-view', 'auto');
         viewer.setAttribute('alt', '3D model of the badge');
         viewer.style.width = '100%';
