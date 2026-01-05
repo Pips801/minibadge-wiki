@@ -43,8 +43,6 @@ document.addEventListener('DOMContentLoaded', () => {
         viewer.setAttribute('camera-controls', '');
         viewer.setAttribute('disable-zoom', '');
         viewer.setAttribute('camera-orbit', '45deg 45deg auto');
-        viewer.setAttribute('min-camera-orbit', 'auto 1deg 80mm');
-        viewer.setAttribute('max-camera-orbit', 'auto 179deg 500mm');
         viewer.setAttribute('interaction-prompt', 'none');
         viewer.setAttribute('camera-target', '0m 0m 0m');
         viewer.setAttribute('shadow-intensity', '2');
