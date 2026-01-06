@@ -134,8 +134,10 @@
               <div class="control">
                 <div class="select is-fullwidth">
                   <select name="sort" id="sortSelect">
-                    <option value="item-timestamp:desc">Newest first</option>
-                    <option value="item-timestamp:asc">Oldest first</option>
+                    <option value="year-then-timestamp:desc">Newest first (by year)</option>
+                    <option value="year-then-timestamp:asc">Oldest first (by year)</option>
+                    <option value="item-timestamp:desc">Newest first (by submission time)</option>
+                    <option value="item-timestamp:asc">Oldest first (by submission time)</option>
                     <option value="item-quantityMade:num-asc">Fewest made</option>
                     <option value="item-quantityMade:num-desc">Most made</option>
                   </select>
@@ -259,7 +261,7 @@
                   </details>
                 </div>
 
-                <p class="is-size-7 has-text-grey-light item-timestamp mt-3"></p>
+              <p class="is-size-7 has-text-grey-light mt-3">Submitted: <span class="item-timestamp"></span></p>
               </div>
             </div>
           </div>

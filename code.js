@@ -711,7 +711,22 @@ document.addEventListener('DOMContentLoaded', () => {
   function sortItems(itemList, field, order, mode) {
     if (!field) return;
 
-    if (field === 'item-timestamp') {
+    if (field === 'year-then-timestamp') {
+      // Sort by conference year first, then by timestamp within that year
+      itemList.sort('item-conferenceYear', {
+        sortFunction: (a, b) => {
+          const yearA = parseInt(a.values()['item-conferenceYear'] || '0', 10);
+          const yearB = parseInt(b.values()['item-conferenceYear'] || '0', 10);
+          const yearDiff = order === 'asc' ? yearA - yearB : yearB - yearA;
+
+          if (yearDiff !== 0) return yearDiff;
+
+          const tsA = parseTimestamp(a.values()['item-timestamp']);
+          const tsB = parseTimestamp(b.values()['item-timestamp']);
+          return order === 'asc' ? tsA - tsB : tsB - tsA;
+        }
+      });
+    } else if (field === 'item-timestamp') {
       // Custom date sort
       itemList.sort(field, {
         sortFunction: (a, b) => {
@@ -739,7 +754,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!sortSelect) return;
 
     const applySortFromSelect = () => {
-      const val = sortSelect.value || 'item-timestamp:desc';
+      const val = sortSelect.value || 'year-then-timestamp:desc';
       const { field, order, mode } = parseSortValue(val);
       sortItems(itemList, field, order, mode);
     };
