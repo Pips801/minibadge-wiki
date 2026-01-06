@@ -226,5 +226,24 @@
     "howToAcquire": "Come find me! I will be giving these out",
     "rarity": "",
     "timestamp": "1/4/2026 19:57:47"
+  },
+  {
+    "title": "Minibadge SMD Challenge Dice",
+    "author": "RuShan",
+    "profilePictureUrl": "images/2026/minibadge-smd-challenge-dice-profile.png",
+    "frontImageUrl": "images/2026/minibadge-smd-challenge-dice-front.png",
+    "backImageUrl": "images/2026/minibadge-smd-challenge-dice-back.png",
+    "3d-model": "",
+    "description": "This was a HHC soldering contest minibadge to test soldering skills.",
+    "specialInstructions": "two videos on assemlby.",
+    "solderingInstructions": "https://youtu.be/gIXEWhKLi_g",
+    "solderingDifficulty": "Advanced",
+    "quantityMade": 0,
+    "category": "Contest",
+    "conferenceYear": "2019",
+    "boardHouse": "",
+    "howToAcquire": "contest during 2019 SAINTCON",
+    "rarity": "",
+    "timestamp": "1/6/2026 9:43:59"
   }
 ]
